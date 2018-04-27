@@ -1,0 +1,17 @@
+name: LReport
+main: ldcr.LReport.Main
+version: 1.0.0
+author: Ldcr
+depend: ["LdcrUtils"]
+softdepend: ["BattlEye"]
+commands:
+  report:
+    description: report some l hacker.
+    usage: /report
+  lpt:
+    description: lol
+    usage: /lpt
+permissions:
+  lreport.lpt:
+    description: 管理举报的权限
+    default: op
