@@ -52,6 +52,8 @@ public class MessageChannel implements PluginMessageListener {
 		final byte[] msgbytes = new byte[len];
 		in.readFully(msgbytes);
 		final DataInputStream msgin = new DataInputStream(new ByteArrayInputStream(msgbytes));
+		final long timestamp = msgin.readLong();
+		if (System.currentTimeMillis() > (timestamp+2000)) return;
 		final String cheater = msgin.readUTF();
 		final String reporter = msgin.readUTF();
 		final String reason = msgin.readUTF();
@@ -62,6 +64,8 @@ public class MessageChannel implements PluginMessageListener {
 		final byte[] msgbytes = new byte[len];
 		in.readFully(msgbytes);
 		final DataInputStream msgin = new DataInputStream(new ByteArrayInputStream(msgbytes));
+		final long timestamp = msgin.readLong();
+		if (System.currentTimeMillis() > (timestamp+2000)) return;
 		final String cheater = msgin.readUTF();
 		final String reporter = msgin.readUTF();
 		final String admin = msgin.readUTF();
@@ -71,6 +75,8 @@ public class MessageChannel implements PluginMessageListener {
 		final byte[] msgbytes = new byte[len];
 		in.readFully(msgbytes);
 		final DataInputStream msgin = new DataInputStream(new ByteArrayInputStream(msgbytes));
+		final long timestamp = msgin.readLong();
+		if (System.currentTimeMillis() > (timestamp+2000)) return;
 		final String serverID = msgin.readUTF();
 		final String[] playerList = msgin.readUTF().split("\\|");
 		onReceivePlayerList(playerList, serverID);
@@ -79,6 +85,8 @@ public class MessageChannel implements PluginMessageListener {
 		final byte[] msgbytes = new byte[len];
 		in.readFully(msgbytes);
 		final DataInputStream msgin = new DataInputStream(new ByteArrayInputStream(msgbytes));
+		final long timestamp = msgin.readLong();
+		if (System.currentTimeMillis() > (timestamp+2000)) return;
 		final String server = msgin.readUTF();
 		forwardOnlineListToServer(server);
 	    }
@@ -93,6 +101,8 @@ public class MessageChannel implements PluginMessageListener {
 
 	    final ByteArrayOutputStream msgbytes = new ByteArrayOutputStream();
 	    final DataOutputStream msgout = new DataOutputStream(msgbytes);
+	    msgout.writeLong(System.currentTimeMillis());
+
 	    msgout.writeUTF(player);
 	    msgout.writeUTF(reporter.getName());
 	    msgout.writeUTF(reason);
@@ -113,6 +123,8 @@ public class MessageChannel implements PluginMessageListener {
 
 	    final ByteArrayOutputStream msgbytes = new ByteArrayOutputStream();
 	    final DataOutputStream msgout = new DataOutputStream(msgbytes);
+	    msgout.writeLong(System.currentTimeMillis());
+
 	    msgout.writeUTF(player);
 	    msgout.writeUTF(reporter);
 	    msgout.writeUTF(admin.getName());
@@ -148,6 +160,8 @@ public class MessageChannel implements PluginMessageListener {
 
 	    final ByteArrayOutputStream msgbytes = new ByteArrayOutputStream();
 	    final DataOutputStream msgout = new DataOutputStream(msgbytes);
+	    msgout.writeLong(System.currentTimeMillis());
+
 	    msgout.writeUTF(Main.instance.serverID);
 	    msgout.writeUTF(list);
 
@@ -170,6 +184,8 @@ public class MessageChannel implements PluginMessageListener {
 
 	    final ByteArrayOutputStream msgbytes = new ByteArrayOutputStream();
 	    final DataOutputStream msgout = new DataOutputStream(msgbytes);
+	    msgout.writeLong(System.currentTimeMillis());
+
 	    msgout.writeUTF(Main.instance.serverID);
 
 	    out.writeShort(msgbytes.toByteArray().length);
@@ -196,6 +212,7 @@ public class MessageChannel implements PluginMessageListener {
 
 	    final ByteArrayOutputStream msgbytes = new ByteArrayOutputStream();
 	    final DataOutputStream msgout = new DataOutputStream(msgbytes);
+	    msgout.writeLong(System.currentTimeMillis());
 	    msgout.writeUTF(Main.instance.serverID);
 	    msgout.writeUTF(list);
 	    out.writeShort(msgbytes.toByteArray().length);
