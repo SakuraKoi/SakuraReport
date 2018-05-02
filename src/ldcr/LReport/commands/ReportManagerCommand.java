@@ -40,7 +40,7 @@ public class ReportManagerCommand implements CommandExecutor {
 		sender.sendMessage("§b§l举报 §7>> §a/lpt tp <举报ID> 传送到被举报玩家");
 		return true;
 	    }
-	    new ReportTeleportThread(sender,args[1]);
+	    new ReportTeleportThread((Player) sender,args[1]);
 	    return true;
 	}
 	case "ok": {

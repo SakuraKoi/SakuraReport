@@ -1,7 +1,6 @@
 package ldcr.LReport;
 
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.Enchantment;
@@ -50,9 +49,7 @@ public class ManageGUIListener implements Listener {
 			    clicker.closeInventory();
 			    return;
 			}
-			clicker.setGameMode(GameMode.SPECTATOR);
-			clicker.teleport(offp.getPlayer());
-			clicker.setSpectatorTarget(offp.getPlayer());
+			Main.instance.specListener.spec(clicker, offp.getPlayer());
 			clicker.sendMessage("§b§l举报 §7>> §a已将您传送到被举报玩家 §6"+rpt.getPlayer()+" §a所在位置.");
 			clicker.closeInventory();
 			return;

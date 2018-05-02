@@ -35,6 +35,7 @@ public class Main extends JavaPlugin implements Listener {
     public ManageGUICreator guiCreator;
     public PlayersCache playersCache;
     public IHook battlEyeHook;
+    public SpecListener specListener;
     @Override
     public void onEnable() {
 	instance = this;
@@ -55,6 +56,7 @@ public class Main extends JavaPlugin implements Listener {
 	hookBattlEye();
 	guiCreator = new ManageGUICreator();
 	Bukkit.getPluginManager().registerEvents(new ManageGUIListener(), this);
+	Bukkit.getPluginManager().registerEvents(specListener = new SpecListener(), this);
 	Bukkit.getPluginManager().registerEvents(this, this);
 	getCommand("report").setExecutor(new ReportCommand());
 	getCommand("lpt").setExecutor(new ReportManagerCommand());
@@ -66,6 +68,7 @@ public class Main extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
 	manager.stopConnection();
+	specListener.backAllSpectator();
     }
     public void loadConfig() {
 	final File configFile = new File(getDataFolder(),"config.yml");
