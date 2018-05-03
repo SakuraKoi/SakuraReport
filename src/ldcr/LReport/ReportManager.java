@@ -16,7 +16,7 @@ public class ReportManager {
 	Main.sendConsoleMessage("&a正在连接Mysql数据库 "+mysqlServer+":"+mysqlPort+" ...");
 	conn = new MysqlConnection(mysqlServer, mysqlUser, mysqlPort, mysqlPassword, mysqlDatabase, 10, Main.instance);
 	if (conn.isConnection()) {
-	    conn.createTable("LReport", "reportID", "player", "reporter", "reason", "reportTime", "displayServer", "serverID");
+	    conn.createTable("LReportNew", "reportID", "player", "reporter", "reason", "reportTime", "displayServer", "serverID","displayPlayerName");
 	} else throw new SQLException("Failed connect Database");
     }
 
@@ -34,22 +34,22 @@ public class ReportManager {
 	return !conn.getValues("LReport", "reportID", 1).isEmpty();
     }
 
-    public boolean addReport(final String player,final String reporter,final String reason,final String displayServer,final String serverID) {
-	final HashMap<String, Object> data = conn.getValueLast("LReport", "reporter", reporter, "reportID", "player","serverID");
+    public boolean addReport(final String displayPlayerName, final String player,final String reporter,final String reason,final String displayServer,final String serverID) {
+	final HashMap<String, Object> data = conn.getValueLast("LReport", "reporter", reporter, "reportID", "player","serverID","displayPlayerName");
 	if (data!=null) {
 	    if (player.equals(data.get("player")))
 		if (serverID.equals(data.get("serverID")))
 		    return conn.setValue("LReport", "id", data.get("reportID"), "reason", reason);
 	}
-	return conn.intoValue("LReport", Report.generateID(),player,reporter,reason,String.valueOf(System.currentTimeMillis()),Main.instance.displayServer,Main.instance.serverID);
+	return conn.intoValue("LReport", Report.generateID(),player,reporter,reason,String.valueOf(System.currentTimeMillis()),Main.instance.displayServer,Main.instance.serverID,displayPlayerName);
     }
 
     public Report getReport(final String id) {
 	if (!conn.isExists("LReport", "reportID", id)) return null;
-	final HashMap<String, Object> data = conn.getValue("LReport", "reportID", id, "player", "reporter", "reason", "reportTime", "displayServer", "serverID");
+	final HashMap<String, Object> data = conn.getValue("LReport", "reportID", id, "player", "reporter", "reason", "reportTime", "displayServer", "serverID", "displayPlayerName");
 	if (data==null) return null;
 	try {
-	    return new Report(id,data.get("player").toString(),data.get("reporter").toString(),data.get("reason").toString(),Long.valueOf(data.get("reportTime").toString()), data.get("displayServer").toString(), data.get("serverID").toString());
+	    return new Report(id,data.get("player").toString(),data.get("reporter").toString(),data.get("reason").toString(),Long.valueOf(data.get("reportTime").toString()), data.get("displayServer").toString(), data.get("serverID").toString(), data.get("displayPlayerName").toString());
 	} catch (final Exception e) {
 	    return null;
 	}
@@ -59,9 +59,9 @@ public class ReportManager {
     }
     public LinkedList<Report> getAllReports() {
 	final LinkedList<Report> reports = new LinkedList<Report>();
-	final LinkedList<HashMap<String, Object>> datas = conn.getValues("LReport", -1, "reportID", "player", "reporter", "reason", "reportTime", "displayServer", "serverID");
+	final LinkedList<HashMap<String, Object>> datas = conn.getValues("LReport", -1, "reportID", "player", "reporter", "reason", "reportTime", "displayServer", "serverID", "displayPlayerName");
 	for (final HashMap<String, Object> data : datas) {
-	    reports.add(new Report(data.get("reportID").toString(),data.get("player").toString(),data.get("reporter").toString(),data.get("reason").toString(),Long.valueOf(data.get("reportTime").toString()), data.get("displayServer").toString(), data.get("serverID").toString()));
+	    reports.add(new Report(data.get("reportID").toString(),data.get("player").toString(),data.get("reporter").toString(),data.get("reason").toString(),Long.valueOf(data.get("reportTime").toString()), data.get("displayServer").toString(), data.get("serverID").toString(), data.get("displayPlayerName").toString()));
 	}
 	return reports;
     }

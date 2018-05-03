@@ -62,7 +62,7 @@ public class ManageGUICreator {
 	meta.setDisplayName("§6§l举报 "+rpt.getID());
 	final LinkedList<String> lore = new LinkedList<String>();
 	lore.add("");
-	lore.add("§b被举报玩家: §c"+rpt.getPlayer());
+	lore.add("§b被举报玩家: §c"+rpt.getDisplayPlayerName());
 	lore.add("§b举报者: §e"+rpt.getReporter());
 	lore.add("§b原因: §e"+rpt.getReason());
 	lore.add("§b所在服务器: §e"+rpt.getDisplayServer());

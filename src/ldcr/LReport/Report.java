@@ -10,7 +10,8 @@ public class Report {
     private final long time;
     private final String displayServer;
     private final String serverID;
-    public Report(final String id, final String player, final String reporter, final String reason, final long time,final String displayServer,final String serverID) {
+    private final String displayPlayerName;
+    public Report(final String id, final String player, final String reporter, final String reason, final long time,final String displayServer,final String serverID, final String displayPlayerName) {
 	this.id = id;
 	this.player = player;
 	this.reporter = reporter;
@@ -18,6 +19,7 @@ public class Report {
 	this.time = time;
 	this.displayServer = displayServer;
 	this.serverID = serverID;
+	this.displayPlayerName = displayPlayerName;
     }
     public String getID() {
 	return id;
@@ -48,5 +50,8 @@ public class Report {
 	    builder.append(keyword[ran.nextInt(keyword.length)]);
 	}
 	return builder.toString();
+    }
+    public String getDisplayPlayerName() {
+	return displayPlayerName;
     }
 }
