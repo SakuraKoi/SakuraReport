@@ -6,27 +6,27 @@ import java.util.Arrays;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import ldcr.LReport.Main;
 
-public class ReportThread implements Runnable {
+public class ConsoleReportThread implements Runnable {
 	private final CommandSender reporter;
 	private final OfflinePlayer player;
 	private final String reason;
-	public ReportThread(final CommandSender reporter,final OfflinePlayer player,final String reason) {
+	public ConsoleReportThread(final CommandSender reporter,final OfflinePlayer player,final String reason) {
 		this.reporter = reporter;
 		this.player = player;
-		this.reason = reason;
+		String temp = reason;
+		if (temp.length()>24) {
+			temp = temp.substring(0, 24);
+			temp = temp+"...[限制24字]";
+		}
+		this.reason = temp;
 		Bukkit.getScheduler().runTaskAsynchronously(Main.instance, this);
 	}
 	@Override
 	public void run() {
-		if (reason.length()>24) {
-			reporter.sendMessage("§b§l举报 §7>> §c举报原因过长, 请重新填写.");
-			return;
-		}
-		if (Main.instance.manager.addReport(player.getName(), reporter.getName(), reason, Main.instance.displayServer, Main.instance.serverID, player.isOnline()? player.getPlayer().getDisplayName() : "[Offline] "+player.getName())) {
+		if (Main.instance.manager.addReport(player.getName(), "Console", reason, Main.instance.displayServer, Main.instance.serverID, player.isOnline()? player.getPlayer().getDisplayName() : "[Offline] "+player.getName())) {
 			reporter.sendMessage("§b§l举报 §7>> §a已成功举报该玩家.");
 			if (!player.isOnline()) {
 				reporter.sendMessage("§b§l举报 §7>> §c注意: 该玩家不在线, 是否打错ID?");
@@ -35,8 +35,6 @@ public class ReportThread implements Runnable {
 					Main.instance.battlEyeHook.active(player.getPlayer(),reporter);
 				}
 			}
-			Main.boardcastOP();
-			Main.instance.messageChannel.forwardReportToOP(player.getName(), (Player) reporter, reason, Main.instance.displayServer);
 			return;
 		} else {
 			reporter.sendMessage("§b§l举报 §7>> §c举报失败. 举报时出错, 请联系管理员.");

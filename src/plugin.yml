@@ -8,6 +8,9 @@ commands:
   report:
     description: report some l hacker.
     usage: /report
+  crpt:
+    description: report some l hacker - console only.
+    usage: /crpt
   lpt:
     description: lol
     usage: /lpt
