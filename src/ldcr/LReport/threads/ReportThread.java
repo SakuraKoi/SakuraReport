@@ -1,5 +1,6 @@
 package ldcr.LReport.threads;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -9,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import ldcr.LReport.Main;
+import ldcr.Utils.ExceptionUtils;
 
 public class ReportThread implements Runnable {
 	private final CommandSender reporter;
@@ -22,11 +24,12 @@ public class ReportThread implements Runnable {
 	}
 	@Override
 	public void run() {
-		if (reason.length()>24) {
+		if (reason.length()>72) {
 			reporter.sendMessage("§b§l举报 §7>> §c举报原因过长, 请重新填写.");
 			return;
 		}
-		if (Main.instance.manager.addReport(player.getName(), reporter.getName(), reason, Main.instance.displayServer, Main.instance.serverID, player.isOnline()? player.getPlayer().getDisplayName() : "[Offline] "+player.getName())) {
+		try {
+			Main.instance.manager.addReport(player.getName(), reporter.getName(), reason, Main.instance.displayServer, Main.instance.serverID, player.isOnline()? player.getPlayer().getDisplayName() : "[Offline] "+player.getName());
 			reporter.sendMessage("§b§l举报 §7>> §a已成功举报该玩家.");
 			if (!player.isOnline()) {
 				reporter.sendMessage("§b§l举报 §7>> §c注意: 该玩家不在线, 是否打错ID?");
@@ -38,9 +41,9 @@ public class ReportThread implements Runnable {
 			Main.boardcastOP();
 			Main.instance.messageChannel.forwardReportToOP(player.getName(), (Player) reporter, reason, Main.instance.displayServer);
 			return;
-		} else {
-			reporter.sendMessage("§b§l举报 §7>> §c举报失败. 举报时出错, 请联系管理员.");
-			return;
+		} catch (final SQLException ex) {
+			ExceptionUtils.printStacetrace(ex);
+			reporter.sendMessage("§b§l举报 §7>> §c举报失败: 数据库错误, 请联系管理员");
 		}
 	}
 	private static boolean isCheatReason(final String reasons) {
@@ -54,17 +57,14 @@ public class ReportThread implements Runnable {
 			"ka",
 			"杀戮",
 			"杀戮光环",
-			"autoclicker",
-			"ac",
-			"连点",
-			"连点器",
-			"speed",
-			"bhop",
-			"timer",
-			"加速",
-			"fly",
-			"飞行",
-			"scaffold",
-			"自动搭路"
+			"aimbot",
+			"aimassist",
+			"自瞄",
+			"自动瞄准",
+			"hitbox",
+			"碰撞箱",
+			"reach",
+			"攻击距离",
+			"距离"
 	}));
 }

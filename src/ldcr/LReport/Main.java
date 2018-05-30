@@ -19,6 +19,7 @@ import ldcr.LReport.Hook.IHook;
 import ldcr.LReport.commands.ConsoleReportCommand;
 import ldcr.LReport.commands.ReportCommand;
 import ldcr.LReport.commands.ReportManagerCommand;
+import ldcr.Utils.ExceptionUtils;
 import ldcr.Utils.Bukkit.TitleUtils;
 
 public class Main extends JavaPlugin implements Listener {
@@ -34,7 +35,6 @@ public class Main extends JavaPlugin implements Listener {
 	public ReportManager manager;
 	public MessageChannel messageChannel;
 	public ManageGUICreator guiCreator;
-	public PlayersCache playersCache;
 	public IHook battlEyeHook;
 	public SpecListener specListener;
 	@Override
@@ -50,7 +50,6 @@ public class Main extends JavaPlugin implements Listener {
 			setEnabled(false);
 			return;
 		}
-		playersCache = new PlayersCache();
 		messageChannel = new MessageChannel();
 		getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 		getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", messageChannel);
@@ -62,10 +61,8 @@ public class Main extends JavaPlugin implements Listener {
 		getCommand("report").setExecutor(new ReportCommand());
 		getCommand("crpt").setExecutor(new ConsoleReportCommand());
 		getCommand("lpt").setExecutor(new ReportManagerCommand());
-		Bukkit.getScheduler().runTaskTimer(this, new PlayersUpdateTask(), 20, 1200);
+		Bukkit.getScheduler().runTaskTimerAsynchronously(this, new PlayersUpdateTask(), 20, 36000);
 		sendConsoleMessage("&a举报系统已加载完毕.");
-		Main.instance.messageChannel.forwardOnlineList();
-		Main.instance.messageChannel.forwardOnlineListRequest();
 	}
 	@Override
 	public void onDisable() {
@@ -97,7 +94,13 @@ public class Main extends JavaPlugin implements Listener {
 		}
 	}
 	public static void boardcastOP() {
-		if (!Main.instance.manager.hasReport()) return;
+		try {
+			if (!Main.instance.manager.hasReport()) return;
+		} catch (final SQLException ex) {
+			ExceptionUtils.printStacetrace(ex);
+			sendConsoleMessage("&c错误: 数据库操作出错, 请检查后台报错.");
+			return;
+		}
 		for (final Player p : Bukkit.getOnlinePlayers()) {
 			if (p.hasPermission("lreport.lpt")) {
 				TitleUtils.sendTitle(p, "", "§c你有未处理举报", 1, 20, 1);
@@ -112,43 +115,61 @@ public class Main extends JavaPlugin implements Listener {
 
 	@EventHandler
 	public void onJoin(final PlayerLoginEvent e) {
-		Bukkit.getScheduler().runTaskLater(this, new Runnable() {
+		Bukkit.getScheduler().runTaskLaterAsynchronously(this, new Runnable() {
 
 			@Override
 			public void run() {
-				Main.instance.messageChannel.forwardOnlineList();
+				try {
+					Main.instance.manager.playerOnline(e.getPlayer().getName());
+				} catch (final SQLException e) {
+					ExceptionUtils.printStacetrace(e);
+					sendConsoleMessage("&c错误: 发生数据库错误, 请检查后台报错.");
+				}
 			}
 
 		}, 10);
 
 		if (e.getPlayer().hasPermission("lreport.lpt")) {
-			if (manager.hasReport()) {
-				Bukkit.getScheduler().runTaskLater(this, new Runnable() {
-					@Override
-					public void run() {
-						TitleUtils.sendTitle(e.getPlayer(), "", "§c你有未处理举报", 1, 20, 1);
+			Bukkit.getScheduler().runTaskLaterAsynchronously(this, new Runnable() {
+				@Override
+				public void run() {
+					try {
+						if (manager.hasReport()) {
+							TitleUtils.sendTitle(e.getPlayer(), "", "§c你有未处理举报", 1, 20, 1);
+						}
+					}catch (final SQLException ex) {
+						ExceptionUtils.printStacetrace(ex);
+						sendConsoleMessage("&c错误: 发生数据库错误, 请检查后台报错.");
+						return;
 					}
 				}
-				, 100);
 			}
+			, 100);
 		}
 	}
 	@EventHandler
 	public void onLogout(final PlayerQuitEvent e) {
-		Bukkit.getScheduler().runTaskLater(this, new Runnable() {
-
+		Bukkit.getScheduler().runTaskLaterAsynchronously(this, new Runnable() {
 			@Override
 			public void run() {
-				Main.instance.messageChannel.forwardOnlineList();
+				try {
+					Main.instance.manager.playerOffline(e.getPlayer().getName());
+				} catch (final SQLException e) {
+					ExceptionUtils.printStacetrace(e);
+					sendConsoleMessage("&c错误: 发生数据库错误, 请检查后台报错.");
+				}
 			}
-
 		}, 10);
 	}
 	class PlayersUpdateTask implements Runnable {
-
 		@Override
 		public void run() {
-			Main.instance.messageChannel.forwardOnlineList();
+			try {
+				Main.instance.manager.updatePlayerlist();
+			} catch (final SQLException e) {
+				ExceptionUtils.printStacetrace(e);
+				Main.sendConsoleMessage("&c更新玩家列表时发生了数据库错误.");
+			}
 		}
 
 	}
