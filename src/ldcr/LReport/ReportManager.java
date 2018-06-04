@@ -11,7 +11,7 @@ import ldcr.Utils.database.MysqlDataSource;
 
 public class ReportManager {
 	private MysqlDataSource conn = null;
-	private final String REPORT_TABLE_NAME = "lreport_reports";
+	private final String REPORT_TABLE_NAME = "lreport_report";
 	private final String PLAYER_TABLE_NAME = "lreport_player";
 	public void connect(final String mysqlServer, final String mysqlPort, final String mysqlDatabase, final String mysqlUser,
 			final String mysqlPassword) throws SQLException {
@@ -19,7 +19,7 @@ public class ReportManager {
 			stopConnection();
 		}
 		Main.sendConsoleMessage("&a正在连接Mysql数据库 "+mysqlServer+":"+mysqlPort+" ...");
-		conn = new MysqlDataSource(mysqlServer, mysqlUser, mysqlPort, mysqlPassword, mysqlDatabase, Main.instance);
+		conn = new MysqlDataSource(mysqlServer, mysqlPort, mysqlUser, mysqlPassword, mysqlDatabase, Main.instance);
 		try {
 			conn.connectDatabase();
 		} catch (final SQLException e) {
@@ -27,7 +27,7 @@ public class ReportManager {
 		}
 		if (conn.isConnected()) {
 			try {
-				conn.createTable(REPORT_TABLE_NAME, "reportID", "player", "reporter", "reason", "reportTime", "displayServer", "serverID","displayPlayerName");
+				conn.createTable(REPORT_TABLE_NAME, "reportID", "player", "reporter", "reason", "reportTime", "displayServer", "serverID","displayPlayerName","isStaff");
 				conn.createTable(PLAYER_TABLE_NAME, "player", "server","indexc");
 			} catch (final SQLException e) {
 				throw new SQLException("Failed create Table", e);
@@ -49,20 +49,24 @@ public class ReportManager {
 		return !conn.getValues(REPORT_TABLE_NAME, "reportID", 1).isEmpty();
 	}
 
-	public void addReport(final String player,final String reporter,final String reason,final String displayServer,final String serverID, final String displayPlayerName) throws SQLException {
-		final HashMap<String, Object> data = conn.getValueLast(REPORT_TABLE_NAME, "reporter", reporter, "reportID", "player","serverID","displayPlayerName");
+	public void addReport(final String player,final String reporter,final String reason, final String displayPlayerName) throws SQLException {
+		final HashMap<String, Object> data = conn.getValueLast(REPORT_TABLE_NAME, "reporter", reporter, "reportID", "player","serverID");
 		if (data!=null) {
 			if (player.equals(data.get("player")))
-				if (serverID.equals(data.get("serverID"))) {
+				if (Main.instance.serverID.equals(data.get("serverID"))) {
 					conn.setValue(REPORT_TABLE_NAME, "id", data.get("reportID"), "reason", reason);
 				}
 		}
-		conn.intoValue(REPORT_TABLE_NAME, Report.generateID(),player,reporter,reason,String.valueOf(System.currentTimeMillis()),Main.instance.displayServer,Main.instance.serverID,displayPlayerName);
+		conn.intoValue(REPORT_TABLE_NAME, Report.generateID(),player,reporter,reason,String.valueOf(System.currentTimeMillis()),Main.instance.displayServer,Main.instance.serverID,displayPlayerName, "false");
+	}
+
+	public void addStaffReport(final String player,final String reporter,final String reason, final String displayPlayerName) throws SQLException {
+		conn.intoValue(REPORT_TABLE_NAME, Report.generateID(),player,reporter,reason,String.valueOf(System.currentTimeMillis()),Main.instance.displayServer,"#STAFF",displayPlayerName, "true");
 	}
 
 	public Report getReport(final String id) throws SQLException {
 		if (!conn.isExists(REPORT_TABLE_NAME, "reportID", id)) return null;
-		final HashMap<String, Object> data = conn.getValue(REPORT_TABLE_NAME, "reportID", id, "player", "reporter", "reason", "reportTime", "displayServer", "serverID", "displayPlayerName");
+		final HashMap<String, Object> data = conn.getValue(REPORT_TABLE_NAME, "reportID", id, "player", "reporter", "reason", "reportTime", "displayServer", "serverID", "displayPlayerName", "isStaff");
 		if (data==null) return null;
 		try {
 			return new Report(id,
@@ -72,7 +76,9 @@ public class ReportManager {
 			                  Long.valueOf(data.get("reportTime").toString()),
 			                  data.get("displayServer").toString(),
 			                  data.get("serverID").toString(),
-			                  data.get("displayPlayerName").toString());
+			                  data.get("displayPlayerName").toString(),
+			                  Boolean.valueOf(data.get("isStaff").toString())
+					);
 		} catch (final Exception e) {
 			return null;
 		}
@@ -82,9 +88,19 @@ public class ReportManager {
 	}
 	public LinkedList<Report> getAllReports() throws SQLException {
 		final LinkedList<Report> reports = new LinkedList<Report>();
-		final LinkedList<HashMap<String, Object>> datas = conn.getValues(REPORT_TABLE_NAME, -1, "reportID", "player", "reporter", "reason", "reportTime", "displayServer", "serverID", "displayPlayerName");
+		final LinkedList<HashMap<String, Object>> datas = conn.getValues(REPORT_TABLE_NAME, -1, "reportID", "player", "reporter", "reason", "reportTime", "displayServer", "serverID", "displayPlayerName", "isStaff");
 		for (final HashMap<String, Object> data : datas) {
-			reports.add(new Report(data.get("reportID").toString(),data.get("player").toString(),data.get("reporter").toString(),data.get("reason").toString(),Long.valueOf(data.get("reportTime").toString()), data.get("displayServer").toString(), data.get("serverID").toString(), data.get("displayPlayerName").toString()));
+			reports.add(new Report(
+			                       data.get("reportID").toString(),
+			                       data.get("player").toString(),
+			                       data.get("reporter").toString(),
+			                       data.get("reason").toString(),
+			                       Long.valueOf(data.get("reportTime").toString()),
+			                       data.get("displayServer").toString(),
+			                       data.get("serverID").toString(),
+			                       data.get("displayPlayerName").toString(),
+			                       Boolean.valueOf(data.get("isStaff").toString())
+					));
 		}
 		return reports;
 	}

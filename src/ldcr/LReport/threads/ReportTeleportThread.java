@@ -7,6 +7,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import ldcr.LReport.Main;
+import ldcr.LReport.MessageBuilder;
 import ldcr.LReport.Report;
 import ldcr.Utils.ExceptionUtils;
 
@@ -26,6 +27,15 @@ public class ReportTeleportThread implements Runnable {
 			if (rpt==null) {
 				player.sendMessage("§b§l举报 §7>> §c举报不存在");
 				return;
+			}
+			if (rpt.isStaffReport()) {
+				if (!player.hasPermission("lreport.staff")) {
+					player.sendMessage("§b§l举报 §7>> §c你没有权限处理处罚申请.");
+					return;
+				} else {
+					MessageBuilder.sendPunishSuggest(player, rpt);
+					return;
+				}
 			}
 			final String server = Main.instance.manager.getPlayerServer(rpt.getPlayer());
 			if(server==null) {

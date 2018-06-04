@@ -43,43 +43,60 @@ public class ManageGUIListener implements Listener {
 					return;
 				}
 				if (e.getAction()==InventoryAction.PICKUP_ALL) { // 左键
-					String server;
-					try {
-						server = Main.instance.manager.getPlayerServer(rpt.getPlayer());
-					} catch (final SQLException e1) {
-						clicker.sendMessage("§b§l举报 §7>> §c错误: 发生数据库错误, 请检查后台报错.");
-						clicker.closeInventory();
-						ExceptionUtils.printStacetrace(e1);
-						return;
-					}
-					if(server==null) {
-						clicker.sendMessage("§b§l举报 §7>> §c被举报玩家 §6"+rpt.getPlayer()+" §c不在线.");
-						clicker.closeInventory();
-						return;
-					}
-					if (Main.instance.serverID.equals(server)) {
-						final OfflinePlayer offp = Bukkit.getOfflinePlayer(rpt.getPlayer());
-						if (offp==null) {
-							clicker.sendMessage("§b§l举报 §7>> §c被举报玩家 §6"+rpt.getPlayer()+" §c不在线.");
-							clicker.closeInventory();
-							return;
+					if (rpt.isStaffReport()) {
+						if(clicker.hasPermission("lreport.staff")) {
+							MessageBuilder.sendPunishSuggest(clicker, rpt);
+						} else {
+							clicker.sendMessage("§b§l举报 §7>> §c你没有权限处理处罚申请.");
 						}
-						if (!offp.isOnline()) {
-							clicker.sendMessage("§b§l举报 §7>> §c被举报玩家 §6"+rpt.getPlayer()+" §c不在线.");
-							clicker.closeInventory();
-							return;
-						}
-						Main.instance.specListener.spec(clicker, offp.getPlayer());
-						clicker.sendMessage("§b§l举报 §7>> §a已将您传送到被举报玩家 §6"+rpt.getPlayer()+" §a所在位置.");
 						clicker.closeInventory();
 						return;
 					} else {
-						Main.instance.messageChannel.jumpServer(clicker, server);
-						clicker.sendMessage("§b§l举报 §7>> §a正在将您传送到被举报玩家所在的 §6"+server+" §a服务器.");
-						clicker.closeInventory();
-						return;
+						String server;
+						try {
+							server = Main.instance.manager.getPlayerServer(rpt.getPlayer());
+						} catch (final SQLException e1) {
+							clicker.sendMessage("§b§l举报 §7>> §c错误: 发生数据库错误, 请检查后台报错.");
+							clicker.closeInventory();
+							ExceptionUtils.printStacetrace(e1);
+							return;
+						}
+						if(server==null) {
+							clicker.sendMessage("§b§l举报 §7>> §c被举报玩家 §6"+rpt.getPlayer()+" §c不在线.");
+							clicker.closeInventory();
+							return;
+						}
+						if (Main.instance.serverID.equals(server)) {
+							final OfflinePlayer offp = Bukkit.getOfflinePlayer(rpt.getPlayer());
+							if (offp==null) {
+								clicker.sendMessage("§b§l举报 §7>> §c被举报玩家 §6"+rpt.getPlayer()+" §c不在线.");
+								clicker.closeInventory();
+								return;
+							}
+							if (!offp.isOnline()) {
+								clicker.sendMessage("§b§l举报 §7>> §c被举报玩家 §6"+rpt.getPlayer()+" §c不在线.");
+								clicker.closeInventory();
+								return;
+							}
+							Main.instance.specListener.spec(clicker, offp.getPlayer());
+							clicker.sendMessage("§b§l举报 §7>> §a已将您传送到被举报玩家 §6"+rpt.getPlayer()+" §a所在位置.");
+							clicker.closeInventory();
+							return;
+						} else {
+							Main.instance.messageChannel.jumpServer(clicker, server);
+							clicker.sendMessage("§b§l举报 §7>> §a正在将您传送到被举报玩家所在的 §6"+server+" §a服务器.");
+							clicker.closeInventory();
+							return;
+						}
 					}
 				} else if (e.getAction() == InventoryAction.PICKUP_HALF) { // 右键
+					if (rpt.isStaffReport()) {
+						if(!clicker.hasPermission("lreport.staff")) {
+							clicker.sendMessage("§b§l举报 §7>> §c你没有权限处理处罚申请.");
+							clicker.closeInventory();
+							return;
+						}
+					}
 					try {
 						Main.instance.manager.deleteReport(id);
 						Main.instance.messageChannel.forwardOKToReporter(rpt.getPlayer(), rpt.getReporter(), clicker);

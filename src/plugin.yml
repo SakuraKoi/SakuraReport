@@ -6,15 +6,14 @@ depend: ["LdcrUtils"]
 softdepend: ["BattlEye"]
 commands:
   report:
-    description: report some l hacker.
-    usage: /report
   crpt:
-    description: report some l hacker - console only.
-    usage: /crpt
+  staff:
   lpt:
-    description: lol
-    usage: /lpt
 permissions:
   lreport.lpt:
     description: 管理举报的权限
     default: op
+  lreport.staff:
+    description: 管理志愿者举报的权限
+    default: op
+

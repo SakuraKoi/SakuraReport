@@ -29,7 +29,7 @@ public class ConsoleReportThread implements Runnable {
 	@Override
 	public void run() {
 		try {
-			Main.instance.manager.addReport(player.getName(), "Console", reason, Main.instance.displayServer, Main.instance.serverID, player.isOnline()? player.getPlayer().getDisplayName() : "[Offline] "+player.getName());
+			Main.instance.manager.addReport(player.getName(), "Console", reason, player.isOnline()? player.getPlayer().getDisplayName() : "[Offline] "+player.getName());
 			reporter.sendMessage("§b§l举报 §7>> §a已成功举报该玩家.");
 			if (!player.isOnline()) {
 				reporter.sendMessage("§b§l举报 §7>> §c注意: 该玩家不在线, 是否打错ID?");

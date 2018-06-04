@@ -19,6 +19,7 @@ import ldcr.LReport.Hook.IHook;
 import ldcr.LReport.commands.ConsoleReportCommand;
 import ldcr.LReport.commands.ReportCommand;
 import ldcr.LReport.commands.ReportManagerCommand;
+import ldcr.LReport.commands.StaffReportCommand;
 import ldcr.Utils.ExceptionUtils;
 import ldcr.Utils.Bukkit.TitleUtils;
 
@@ -42,10 +43,12 @@ public class Main extends JavaPlugin implements Listener {
 		instance = this;
 		logger = Bukkit.getConsoleSender();
 		loadConfig();
+		specListener = new SpecListener();
 		manager = new ReportManager();
 		try {
 			manager.connect(mysqlServer,mysqlPort,mysqlDatabase,mysqlUser,mysqlPassword);
 		} catch (final SQLException e) {
+			ExceptionUtils.printStacetrace(e);
 			Main.sendConsoleMessage("&c数据库连接失败, 请检查配置文件.");
 			setEnabled(false);
 			return;
@@ -56,9 +59,10 @@ public class Main extends JavaPlugin implements Listener {
 		hookBattlEye();
 		guiCreator = new ManageGUICreator();
 		Bukkit.getPluginManager().registerEvents(new ManageGUIListener(), this);
-		Bukkit.getPluginManager().registerEvents(specListener = new SpecListener(), this);
+		Bukkit.getPluginManager().registerEvents(specListener, this);
 		Bukkit.getPluginManager().registerEvents(this, this);
 		getCommand("report").setExecutor(new ReportCommand());
+		getCommand("staff").setExecutor(new StaffReportCommand());
 		getCommand("crpt").setExecutor(new ConsoleReportCommand());
 		getCommand("lpt").setExecutor(new ReportManagerCommand());
 		Bukkit.getScheduler().runTaskTimerAsynchronously(this, new PlayersUpdateTask(), 20, 36000);

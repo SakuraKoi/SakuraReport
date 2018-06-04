@@ -26,6 +26,12 @@ public class AcceptReportThread implements Runnable {
 				sender.sendMessage("§b§l举报 §7>> §c举报不存在");
 				return;
 			}
+			if (rpt.isStaffReport()) {
+				if (!sender.hasPermission("lreport.staff")) {
+					sender.sendMessage("§b§l举报 §7>> §c你没有权限处理处罚申请.");
+					return;
+				}
+			}
 			Main.instance.manager.deleteReport(rpt.getID());
 			Main.instance.messageChannel.forwardOKToReporter(rpt.getPlayer(), rpt.getReporter(), (Player) sender);
 			sender.sendMessage("§b§l举报 §7>> §a处理举报成功.");

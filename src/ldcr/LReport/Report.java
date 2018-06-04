@@ -11,7 +11,8 @@ public class Report {
 	private final String displayServer;
 	private final String serverID;
 	private final String displayPlayerName;
-	public Report(final String id, final String player, final String reporter, final String reason, final long time,final String displayServer,final String serverID, final String displayPlayerName) {
+	private final boolean isStaffReport;
+	public Report(final String id, final String player, final String reporter, final String reason, final long time,final String displayServer,final String serverID, final String displayPlayerName, final boolean isStaff) {
 		this.id = id;
 		this.player = player;
 		this.reporter = reporter;
@@ -20,6 +21,7 @@ public class Report {
 		this.displayServer = displayServer;
 		this.serverID = serverID;
 		this.displayPlayerName = displayPlayerName;
+		isStaffReport = isStaff;
 	}
 	public String getID() {
 		return id;
@@ -53,5 +55,8 @@ public class Report {
 	}
 	public String getDisplayPlayerName() {
 		return displayPlayerName;
+	}
+	public boolean isStaffReport() {
+		return isStaffReport;
 	}
 }
