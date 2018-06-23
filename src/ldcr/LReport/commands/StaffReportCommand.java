@@ -6,6 +6,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import ldcr.LReport.Main;
+import ldcr.LReport.MessageBuilder;
+import ldcr.LReport.Report;
 import ldcr.LReport.threads.StaffReportThread;
 import ldcr.Utils.Bukkit.command.CommandHandler;
 
@@ -31,19 +33,24 @@ public class StaffReportCommand extends CommandHandler {
 			sendMessage(sender, "§c该玩家不存在.");
 			return;
 		}
-		String reason = null;
-		if (args.length>1) {
-			final StringBuilder builder = new StringBuilder();
-			for (int i = 1;i<args.length;i++) {
-				builder.append(args[i]);
-				builder.append(' ');
-			}
-			reason = builder.toString();
+		if (sender.hasPermission("lreport.staff")) {
+			// do fast staff
+			MessageBuilder.sendPunishSuggest((Player) sender, new Report("#NULL", offp.getName(), sender.getName(), "STAFF PUNISHING", 0, "NULL", "NULL", offp.getName(), true));
 		} else {
-			sendMessage(sender, "§c请提供举报原因.");
-			return;
+			String reason = null;
+			if (args.length>1) {
+				final StringBuilder builder = new StringBuilder();
+				for (int i = 1;i<args.length;i++) {
+					builder.append(args[i]);
+					builder.append(' ');
+				}
+				reason = builder.toString();
+			} else {
+				sendMessage(sender, "§c请提供举报原因.");
+				return;
+			}
+			new StaffReportThread(sender,offp,reason);
 		}
-		new StaffReportThread(sender,offp,reason);
 	}
 
 }
