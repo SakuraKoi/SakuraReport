@@ -26,8 +26,8 @@ public class ReportCommand extends CommandHandler {
 			sendMessage(sender,"&7/report <玩家> <原因>");
 			if (Main.instance.battlEyeHook instanceof BattlEyeHook) {
 				sendMessage(sender,
-				            "§a      常见战斗作弊: Killaura/杀戮光环 Aimbot/自瞄 Hitbox/碰撞箱 Reach/攻击距离",
-				            "§c      如果你举报原因为以上原因, 被举报玩家将自动被 §3§lBattlEye反作弊 &c检测."
+				            "§a  常见作弊: Killaura Aimbot Hitbox Reach",
+				            "§c  如果您举报为以上原因, 被举报玩家将被 §b§lBattlEye反作弊 &c检测."
 						);
 			}
 			return;
