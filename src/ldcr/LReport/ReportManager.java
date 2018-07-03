@@ -11,7 +11,8 @@ import ldcr.Utils.database.MysqlDataSource;
 
 public class ReportManager {
 	private MysqlDataSource conn = null;
-	private final String REPORT_TABLE_NAME = "lreport_report";
+	private final String OLD_REPORT_TABLE_NAME = "lreport_report";
+	private final String REPORT_TABLE_NAME = "lreport_report_New";
 	private final String PLAYER_TABLE_NAME = "lreport_player";
 	public void connect(final String mysqlServer, final String mysqlPort, final String mysqlDatabase, final String mysqlUser,
 			final String mysqlPassword) throws SQLException {
@@ -27,8 +28,9 @@ public class ReportManager {
 		}
 		if (conn.isConnected()) {
 			try {
-				conn.createTable(REPORT_TABLE_NAME, "reportID", "player", "reporter", "reason", "reportTime", "displayServer", "serverID","displayPlayerName","isStaff");
+				conn.createTable(REPORT_TABLE_NAME, "reportID", "player", "reporter", "reason", "reportTime", "displayServer", "serverID","displayPlayerName","isStaff", "reportIndex");
 				conn.createTable(PLAYER_TABLE_NAME, "player", "server","indexc");
+				conn.deleteTable(OLD_REPORT_TABLE_NAME);
 			} catch (final SQLException e) {
 				throw new SQLException("Failed create Table", e);
 			}
@@ -49,19 +51,14 @@ public class ReportManager {
 		return !conn.getValues(REPORT_TABLE_NAME, "reportID", 1).isEmpty();
 	}
 
-	public void addReport(final String player,final String reporter,final String reason, final String displayPlayerName) throws SQLException {
-		final HashMap<String, Object> data = conn.getValueLast(REPORT_TABLE_NAME, "reporter", reporter, "reportID", "player","serverID");
-		if (data!=null) {
-			if (player.equals(data.get("player")))
-				if (Main.instance.serverID.equals(data.get("serverID"))) {
-					conn.setValue(REPORT_TABLE_NAME, "id", data.get("reportID"), "reason", reason);
-				}
-		}
-		conn.intoValue(REPORT_TABLE_NAME, Report.generateID(),player,reporter,reason,String.valueOf(System.currentTimeMillis()),Main.instance.displayServer,Main.instance.serverID,displayPlayerName, "false");
+	public boolean addReport(final String player,final String reporter,final String reason, final String displayPlayerName) throws SQLException {
+		if (conn.isExists(REPORT_TABLE_NAME, "reportIndex", reporter+":"+player)) return false;
+		conn.intoValue(REPORT_TABLE_NAME, Report.generateID(),player,reporter,reason,String.valueOf(System.currentTimeMillis()),Main.instance.displayServer,Main.instance.serverID,displayPlayerName, "false", reporter+":"+player);
+		return true;
 	}
 
 	public void addStaffReport(final String player,final String reporter,final String reason, final String displayPlayerName) throws SQLException {
-		conn.intoValue(REPORT_TABLE_NAME, Report.generateID(),player,reporter,reason,String.valueOf(System.currentTimeMillis()),Main.instance.displayServer,"#STAFF",displayPlayerName, "true");
+		conn.intoValue(REPORT_TABLE_NAME, Report.generateID(),player,reporter,reason,String.valueOf(System.currentTimeMillis()),Main.instance.displayServer,"#STAFF",displayPlayerName, "true", reporter+":"+player);
 	}
 
 	public Report getReport(final String id) throws SQLException {

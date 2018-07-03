@@ -29,7 +29,10 @@ public class ReportThread implements Runnable {
 			return;
 		}
 		try {
-			Main.instance.manager.addReport(player.getName(), reporter.getName(), reason, player.isOnline()? player.getPlayer().getDisplayName() : "[Offline] "+player.getName());
+			if (!Main.instance.manager.addReport(player.getName(), reporter.getName(), reason, player.isOnline()? player.getPlayer().getDisplayName() : "[Offline] "+player.getName())) {
+				reporter.sendMessage("§b§l举报 §7>> §a您已举报过玩家 "+player.getName()+", 请等待管理员处理...");
+				return;
+			}
 			reporter.sendMessage("§b§l举报 §7>> §a已成功举报该玩家.");
 			if (!player.isOnline()) {
 				reporter.sendMessage("§b§l举报 §7>> §c注意: 该玩家不在线, 是否打错ID?");

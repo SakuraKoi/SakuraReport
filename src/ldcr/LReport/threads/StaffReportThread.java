@@ -23,7 +23,6 @@ public class StaffReportThread implements Runnable {
 	@Override
 	public void run() {
 		try {
-
 			Main.instance.manager.addStaffReport(player.getName(), reporter.getName(), reason, player.isOnline()? player.getPlayer().getDisplayName() : player.getName());
 			reporter.sendMessage("§b§l举报 §7>> §a已提交对玩家 "+player.getName()+" 的处罚申请.");
 			if (!player.isOnline()) {
