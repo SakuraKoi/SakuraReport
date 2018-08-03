@@ -48,7 +48,7 @@ public class SpecListener implements Listener {
 			public void run() {
 				player.setSpectatorTarget(entity);
 			}
-		}.runTaskLater(Main.instance, 5);
+		}.runTaskLater(LReport.getInstance(), 5);
 	}
 	public void backAllSpectator() {
 		for (final SpecInfo info : specLocation.values()) {

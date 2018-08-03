@@ -1,5 +1,5 @@
 name: LReport
-main: ldcr.LReport.Main
+main: ldcr.LReport.LReport
 version: 6
 author: Ldcr
 depend: ["LdcrUtils"]

@@ -5,7 +5,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import ldcr.LReport.Main;
+import ldcr.LReport.LReport;
 import ldcr.LReport.MessageBuilder;
 import ldcr.LReport.Report;
 import ldcr.LReport.threads.StaffReportThread;
@@ -14,7 +14,7 @@ import ldcr.Utils.Bukkit.command.CommandHandler;
 public class StaffReportCommand extends CommandHandler {
 
 	public StaffReportCommand() {
-		super(Main.instance, "§b§l举报");
+		super(LReport.getInstance(), "§b§l举报");
 	}
 
 	@Override

@@ -8,8 +8,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
-import ldcr.LReport.Main;
-import ldcr.Utils.ExceptionUtils;
+import ldcr.LReport.LReport;
+import ldcr.Utils.exception.ExceptionUtils;
 
 public class ConsoleReportThread implements Runnable {
 	private final CommandSender reporter;
@@ -24,23 +24,23 @@ public class ConsoleReportThread implements Runnable {
 			temp = temp+"...[限制48字]";
 		}
 		this.reason = temp;
-		Bukkit.getScheduler().runTaskAsynchronously(Main.instance, this);
+		Bukkit.getScheduler().runTaskAsynchronously(LReport.getInstance(), this);
 	}
 	@Override
 	public void run() {
 		try {
-			Main.instance.manager.addReport(player.getName(), "Console", reason, player.isOnline()? player.getPlayer().getDisplayName() : "[Offline] "+player.getName());
+			LReport.getInstance().getReportManager().addReport(player.getName(), "Console", reason, player.isOnline()? player.getPlayer().getDisplayName() : "[Offline] "+player.getName());
 			reporter.sendMessage("§b§l举报 §7>> §a已成功举报该玩家.");
 			if (!player.isOnline()) {
 				reporter.sendMessage("§b§l举报 §7>> §c注意: 该玩家不在线, 是否打错ID?");
 			} else {
 				if (isCheatReason(reason)) {
-					Main.instance.battlEyeHook.active(player.getPlayer(),reporter);
+					LReport.getInstance().matrixHook.active(player.getPlayer(),reporter);
 				}
 			}
 			return;
 		} catch (final SQLException ex) {
-			ExceptionUtils.printStacetrace(ex);
+			ExceptionUtils.printStacktrace(ex);
 			reporter.sendMessage("§b§l举报 §7>> §c错误: 数据库操作出错, 请检查后台报错.");
 		}
 	}

@@ -1,6 +1,5 @@
 package ldcr.LReport;
 
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 
@@ -15,7 +14,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Wool;
 
 import ldcr.LReport.threads.ManageGUIThread;
-import ldcr.Utils.ExceptionUtils;
 
 public class ManageGUICreator {
 	public void openManageGUI(final Player player) {
@@ -68,14 +66,8 @@ public class ManageGUICreator {
 			return item;
 		} else {
 			String server;
-			boolean error = false;
-			try {
-				server = Main.instance.manager.getPlayerServer(rpt.getPlayer());
-			} catch (final SQLException e) {
-				server=null;
-				error = true;
-				ExceptionUtils.printStacetrace(e);
-			}
+			final boolean error = false;
+			server = LReport.getInstance().getReportManager().getCachedPlayerServer(rpt.getPlayer());
 			boolean isOnReportServer = false;
 			final boolean isOnline = server!=null;
 			if (isOnline) {

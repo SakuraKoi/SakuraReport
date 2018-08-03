@@ -1,5 +1,6 @@
 package ldcr.LReport.threads;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,8 +10,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import ldcr.LReport.Main;
-import ldcr.Utils.ExceptionUtils;
+import ldcr.LReport.LReport;
+import ldcr.Utils.exception.ExceptionUtils;
 
 public class ReportThread implements Runnable {
 	private final CommandSender reporter;
@@ -20,7 +21,7 @@ public class ReportThread implements Runnable {
 		this.reporter = reporter;
 		this.player = player;
 		this.reason = reason;
-		Bukkit.getScheduler().runTaskAsynchronously(Main.instance, this);
+		Bukkit.getScheduler().runTaskAsynchronously(LReport.getInstance(), this);
 	}
 	@Override
 	public void run() {
@@ -29,7 +30,7 @@ public class ReportThread implements Runnable {
 			return;
 		}
 		try {
-			if (!Main.instance.manager.addReport(player.getName(), reporter.getName(), reason, player.isOnline()? player.getPlayer().getDisplayName() : "[Offline] "+player.getName())) {
+			if (!LReport.getInstance().getReportManager().addReport(player.getName(), reporter.getName(), reason, player.isOnline()? player.getPlayer().getDisplayName() : "[Offline] "+player.getName())) {
 				reporter.sendMessage("§b§l举报 §7>> §a您已举报过玩家 "+player.getName()+", 请等待管理员处理...");
 				return;
 			}
@@ -38,14 +39,18 @@ public class ReportThread implements Runnable {
 				reporter.sendMessage("§b§l举报 §7>> §c注意: 该玩家不在线, 是否打错ID?");
 			} else {
 				if (isCheatReason(reason)) {
-					Main.instance.battlEyeHook.active(player.getPlayer(),reporter);
+					LReport.getInstance().matrixHook.active(player.getPlayer(),reporter);
 				}
 			}
-			Main.boardcastOP();
-			Main.instance.messageChannel.forwardReportToOP(player.getName(), (Player) reporter, reason, Main.instance.displayServer);
+			try {
+				LReport.getInstance().getMessageChannel().broadcastReport(player.getName(), (Player) reporter, LReport.displayServer, reason);
+			} catch (final IOException e) {
+				ExceptionUtils.printStacktrace(e);
+				reporter.sendMessage("§b§l举报 §7>> §e发生数据库错误, 请联系管理员");
+			}
 			return;
 		} catch (final SQLException ex) {
-			ExceptionUtils.printStacetrace(ex);
+			ExceptionUtils.printStacktrace(ex);
 			reporter.sendMessage("§b§l举报 §7>> §c举报失败: 数据库错误, 请联系管理员");
 		}
 	}

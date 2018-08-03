@@ -3,7 +3,7 @@ package ldcr.LReport.commands;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import ldcr.LReport.Main;
+import ldcr.LReport.LReport;
 import ldcr.LReport.threads.AcceptReportThread;
 import ldcr.LReport.threads.ListReportThread;
 import ldcr.LReport.threads.ReportTeleportThread;
@@ -12,7 +12,7 @@ import ldcr.Utils.Bukkit.command.CommandHandler;
 public class ReportManagerCommand extends CommandHandler {
 
 	public ReportManagerCommand() {
-		super(Main.instance, "§b§l举报");
+		super(LReport.getInstance(), "§b§l举报");
 	}
 
 	@Override
@@ -23,7 +23,7 @@ public class ReportManagerCommand extends CommandHandler {
 			return;
 		}
 		if (args.length==0) {
-			Main.instance.guiCreator.openManageGUI((Player) sender);
+			LReport.getInstance().guiCreator.openManageGUI((Player) sender);
 			return;
 		}
 		switch (args[0].toLowerCase()) {
