@@ -1,13 +1,13 @@
-package ldcr.LReport;
+package ldcr.LReport.messageChannel;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Iterator;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
@@ -15,40 +15,10 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
-import ldcr.Utils.Bukkit.TitleUtils;
+import ldcr.LReport.LReport;
 
-public class MessageChannel implements PluginMessageListener {
-	public void onReceiveBroadcastOP(final String cheater,final String reporter,final String reason,final String server) {
-		for (final Player player : Bukkit.getOnlinePlayers()) {
-			if (player.hasPermission("lreport.lpt")) {
-				player.sendMessage(new String [] {
-						"§b§l举报 §7>> §e------------------------------",
-						"§b§l举报 §7>> §e玩家 §a"+reporter+" §e在服务器 §d"+server+" §e举报了玩家 §c"+cheater,
-						"§b§l举报 §7>> §e举报原因:  §a"+reason,
-						"§b§l举报 §7>> §e------------------------------"
-				});
-			}
-		}
-	}
-	public void onReceiveBroadcastStaff(final String cheater,final String reporter,final String reason,final String server) {
-		for (final Player player : Bukkit.getOnlinePlayers()) {
-			if (player.hasPermission("lreport.staff")) {
-				player.sendMessage(new String [] {
-						"§b§l举报 §7>> §a------------------------------",
-						"§b§l举报 §7>> §b志愿者 §a"+reporter+" §b请求处罚玩家 §c"+cheater,
-						"§b§l举报 §7>> §b处罚原因:  §a"+reason
-				});
-			}
-		}
-	}
-	public void onReceiveBroadcastReporter(final String cheater,final String reporter,final String admin) {
-		final OfflinePlayer offp = Bukkit.getOfflinePlayer(reporter);
-		if (offp==null) return;
-		if (offp.isOnline()) {
-			TitleUtils.sendTitle(offp.getPlayer(), "", "§a你对玩家 §c"+cheater +" §a的举报已被 §b"+admin+ " §a处理", 10, 20, 10);
-			offp.getPlayer().sendMessage("§b§l举报 §7>> §a你对玩家 §c"+cheater +" §a的举报已被 §b"+admin+ " §a处理");
-		}
-	}
+public class BungeecordMessageChannel implements PluginMessageListener, IMessageChannel {
+	private final MessageProcessor processor = new MessageProcessor();
 	@Override
 	public void onPluginMessageReceived(final String channel, final Player player, final byte[] message) {
 		if (!channel.equals("BungeeCord"))
@@ -56,7 +26,7 @@ public class MessageChannel implements PluginMessageListener {
 		final ByteArrayDataInput in = ByteStreams.newDataInput(message);
 		final String subchannel = in.readUTF();
 		try {
-			if (subchannel.equals("LReportToOP")) {
+			if (subchannel.equals("LReport_report")) {
 				final short len = in.readShort();
 				final byte[] msgbytes = new byte[len];
 				in.readFully(msgbytes);
@@ -67,8 +37,8 @@ public class MessageChannel implements PluginMessageListener {
 				final String reporter = msgin.readUTF();
 				final String reason = msgin.readUTF();
 				final String server = msgin.readUTF();
-				onReceiveBroadcastOP(cheater, reporter, reason, server);
-			} else if (subchannel.equals("LReportToReporter")) {
+				processor.onReceiveBroadcastReport(cheater, reporter, reason, server);
+			} else if (subchannel.equals("LReport_processed")) {
 				final short len = in.readShort();
 				final byte[] msgbytes = new byte[len];
 				in.readFully(msgbytes);
@@ -78,8 +48,8 @@ public class MessageChannel implements PluginMessageListener {
 				final String cheater = msgin.readUTF();
 				final String reporter = msgin.readUTF();
 				final String admin = msgin.readUTF();
-				onReceiveBroadcastReporter(cheater, reporter, admin);
-			} else if (subchannel.equals("LReportToStaff")) {
+				processor.onReceiveBroadcastProcessed(cheater, reporter, admin);
+			} else if (subchannel.equals("LReport_staff")) {
 				final short len = in.readShort();
 				final byte[] msgbytes = new byte[len];
 				in.readFully(msgbytes);
@@ -90,38 +60,65 @@ public class MessageChannel implements PluginMessageListener {
 				final String reporter = msgin.readUTF();
 				final String reason = msgin.readUTF();
 				final String server = msgin.readUTF();
-				onReceiveBroadcastStaff(cheater, reporter, reason, server);
+				processor.onReceiveBroadcastStaff(cheater, reporter, reason, server);
 			}
 		} catch (final IOException e) {}
 	}
-	public void forwardReportToOP(final String player,final Player reporter, final String reason, final String server) {
+
+	@Override
+	public void broadcastReport(final String player, final Player reporter, final String server, final String reason) {
 		try {
 			final ByteArrayDataOutput out = ByteStreams.newDataOutput();
 			out.writeUTF("Forward");
 			out.writeUTF("ALL");
-			out.writeUTF("LReportToOP");
-
+			out.writeUTF("LReport_report");
 			final ByteArrayOutputStream msgbytes = new ByteArrayOutputStream();
 			final DataOutputStream msgout = new DataOutputStream(msgbytes);
 			msgout.writeLong(System.currentTimeMillis());
-
 			msgout.writeUTF(player);
 			msgout.writeUTF(reporter.getName());
 			msgout.writeUTF(reason);
 			msgout.writeUTF(server);
-
 			out.writeShort(msgbytes.toByteArray().length);
 			out.write(msgbytes.toByteArray());
-			reporter.sendPluginMessage(Main.instance, "BungeeCord", out.toByteArray());
-			onReceiveBroadcastOP(player, reporter.getName(), reason, server);
+			reporter.sendPluginMessage(LReport.getInstance(), "BungeeCord", out.toByteArray());
+			processor.onReceiveBroadcastReport(player, reporter.getName(), reason, server);
 		} catch (final Exception e) {}
 	}
-	public void forwardStaffReport(final String player,final Player reporter, final String reason, final String server) {
+	@Override
+	public void broadcastConsoleReport(final String player, final String server, final String reason) {
+		Player sender;
+		{
+			final Iterator<? extends Player> iter = Bukkit.getOnlinePlayers().iterator();
+			if (!iter.hasNext()) return;
+			sender = iter.next();
+		}
 		try {
 			final ByteArrayDataOutput out = ByteStreams.newDataOutput();
 			out.writeUTF("Forward");
 			out.writeUTF("ALL");
-			out.writeUTF("LReportToStaff");
+			out.writeUTF("LReport_report");
+
+			final ByteArrayOutputStream msgbytes = new ByteArrayOutputStream();
+			final DataOutputStream msgout = new DataOutputStream(msgbytes);
+			msgout.writeLong(System.currentTimeMillis());
+			msgout.writeUTF(player);
+			msgout.writeUTF("Console");
+			msgout.writeUTF(reason);
+			msgout.writeUTF(server);
+			out.writeShort(msgbytes.toByteArray().length);
+			out.write(msgbytes.toByteArray());
+			sender.sendPluginMessage(LReport.getInstance(), "BungeeCord", out.toByteArray());
+			processor.onReceiveBroadcastReport(player, "Console", reason, server);
+		} catch (final Exception e) {}
+	}
+	@Override
+	public void broadcastStaff(final String player, final Player reporter, final String server, final String reason) {
+		try {
+			final ByteArrayDataOutput out = ByteStreams.newDataOutput();
+			out.writeUTF("Forward");
+			out.writeUTF("ALL");
+			out.writeUTF("LReport_staff");
 
 			final ByteArrayOutputStream msgbytes = new ByteArrayOutputStream();
 			final DataOutputStream msgout = new DataOutputStream(msgbytes);
@@ -134,16 +131,17 @@ public class MessageChannel implements PluginMessageListener {
 
 			out.writeShort(msgbytes.toByteArray().length);
 			out.write(msgbytes.toByteArray());
-			reporter.sendPluginMessage(Main.instance, "BungeeCord", out.toByteArray());
-			onReceiveBroadcastStaff(player, reporter.getDisplayName(), reason, server);
+			reporter.sendPluginMessage(LReport.getInstance(), "BungeeCord", out.toByteArray());
+			processor.onReceiveBroadcastStaff(player, reporter.getDisplayName(), reason, server);
 		} catch (final Exception e) {}
 	}
-	public void forwardOKToReporter(final String player, final String reporter, final Player admin) {
+	@Override
+	public void broadcastProcessed(final String player, final String reporter, final Player executor) {
 		try {
 			final ByteArrayDataOutput out = ByteStreams.newDataOutput();
 			out.writeUTF("Forward");
 			out.writeUTF("ALL");
-			out.writeUTF("LReportToReporter");
+			out.writeUTF("LReport_processed");
 
 			final ByteArrayOutputStream msgbytes = new ByteArrayOutputStream();
 			final DataOutputStream msgout = new DataOutputStream(msgbytes);
@@ -151,44 +149,27 @@ public class MessageChannel implements PluginMessageListener {
 
 			msgout.writeUTF(player);
 			msgout.writeUTF(reporter);
-			msgout.writeUTF(admin.getName());
+			msgout.writeUTF(executor.getName());
 
 			out.writeShort(msgbytes.toByteArray().length);
 			out.write(msgbytes.toByteArray());
-			admin.sendPluginMessage(Main.instance, "BungeeCord", out.toByteArray());
-			onReceiveBroadcastReporter(player, reporter, admin.getName());
+			executor.sendPluginMessage(LReport.getInstance(), "BungeeCord", out.toByteArray());
+			processor.onReceiveBroadcastProcessed(player, reporter, executor.getName());
 		} catch (final Exception e) {}
 	}
 
-	public void jumpServer(final Player player,final String serverID) {
-		try {
-			final ByteArrayDataOutput out = ByteStreams.newDataOutput();
-			out.writeUTF("Connect");
-			out.writeUTF(serverID);
-			player.sendPluginMessage(Main.instance, "BungeeCord", out.toByteArray());
-		} catch (final Exception e) {}
+	@Override
+	public void connectChannel() {
+		Bukkit.getServer().getMessenger().registerIncomingPluginChannel(LReport.getInstance(), "BungeeCord", this);
 	}
 
-	public void forwardConsoleReportToOP(final String name, final Player player, final String reason, final String server) {
-		try {
-			final ByteArrayDataOutput out = ByteStreams.newDataOutput();
-			out.writeUTF("Forward");
-			out.writeUTF("ALL");
-			out.writeUTF("LReportToOP");
+	@Override
+	public void disconnectChannel() {
+		Bukkit.getServer().getMessenger().unregisterIncomingPluginChannel(LReport.getInstance(), "BungeeCord", this);
+	}
 
-			final ByteArrayOutputStream msgbytes = new ByteArrayOutputStream();
-			final DataOutputStream msgout = new DataOutputStream(msgbytes);
-			msgout.writeLong(System.currentTimeMillis());
-
-			msgout.writeUTF(name);
-			msgout.writeUTF("Console");
-			msgout.writeUTF(reason);
-			msgout.writeUTF(server);
-
-			out.writeShort(msgbytes.toByteArray().length);
-			out.write(msgbytes.toByteArray());
-			player.sendPluginMessage(Main.instance, "BungeeCord", out.toByteArray());
-			onReceiveBroadcastOP(name, "Console", reason, server);
-		} catch (final Exception e) {}
+	@Override
+	public void jumpServer(final Player player, final String server) {
+		processor.jumpServer(player, server);
 	}
 }

@@ -6,10 +6,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
-import ldcr.LReport.Main;
+import ldcr.LReport.LReport;
 import ldcr.LReport.MessageBuilder;
 import ldcr.LReport.Report;
-import ldcr.Utils.ExceptionUtils;
+import ldcr.Utils.exception.ExceptionUtils;
 
 public class ReportTeleportThread implements Runnable {
 	private final Player player;
@@ -17,13 +17,13 @@ public class ReportTeleportThread implements Runnable {
 	public ReportTeleportThread(final Player sender, final String id) {
 		player = sender;
 		this.id = id;
-		Bukkit.getScheduler().runTaskAsynchronously(Main.instance, this);
+		Bukkit.getScheduler().runTaskAsynchronously(LReport.getInstance(), this);
 	}
 	@SuppressWarnings("deprecation")
 	@Override
 	public void run() {
 		try {
-			final Report rpt = Main.instance.manager.getReport("#"+id);
+			final Report rpt = LReport.getInstance().getReportManager().getReport("#"+id);
 			if (rpt==null) {
 				player.sendMessage("§b§l举报 §7>> §c举报不存在");
 				return;
@@ -37,13 +37,14 @@ public class ReportTeleportThread implements Runnable {
 					return;
 				}
 			}
-			final String server = Main.instance.manager.getPlayerServer(rpt.getPlayer());
+			final String server = LReport.getInstance().getReportManager().getPlayerServer(rpt.getPlayer());
 			if(server==null) {
 				player.sendMessage("§b§l举报 §7>> §c被举报玩家 §6"+rpt.getPlayer()+" §c不在线.");
 				player.closeInventory();
 				return;
 			}
-			if (Main.instance.serverID.equals(server)) {
+			LReport.getInstance();
+			if (LReport.serverID.equals(server)) {
 				final OfflinePlayer offp = Bukkit.getOfflinePlayer(rpt.getPlayer());
 				if (offp==null) {
 					player.sendMessage("§b§l举报 §7>> §c被举报玩家 §6"+rpt.getPlayer()+" §c不在线.");
@@ -55,28 +56,19 @@ public class ReportTeleportThread implements Runnable {
 					player.closeInventory();
 					return;
 				}
-				Main.instance.specListener.spec(player, offp.getPlayer());
+				LReport.getInstance().specListener.spec(player, offp.getPlayer());
 				player.sendMessage("§b§l举报 §7>> §a已将您传送到被举报玩家 §6"+rpt.getPlayer()+" §a所在位置.");
 				player.closeInventory();
 				return;
 			} else {
-				Main.instance.messageChannel.jumpServer(player, server);
+				LReport.getInstance().getMessageChannel().jumpServer(player, server);
 				player.sendMessage("§b§l举报 §7>> §a正在将您传送到被举报玩家所在的 §6"+server+" §a服务器.");
 				player.closeInventory();
 				return;
 			}
 		} catch (final SQLException ex) {
-			ExceptionUtils.printStacetrace(ex);
-			player.sendMessage("§b§l举报 §7>> §c错误: 数据库操作出错, 请检查后台报错.");
+			ExceptionUtils.printStacktrace(ex);
+			player.sendMessage("§b§l举报 §7>> §c错误: 发生数据库错误");
 		}
-		/*
-	final OfflinePlayer offp = Bukkit.getOfflinePlayer(rpt.getPlayer());
-	if (!offp.isOnline()) {
-	    sender.sendMessage("§b§l举报 §7>> §c被举报玩家已离线.");
-	    return;
-	}
-	Main.instance.specListener.spec(clicker, offp.getPlayer());
-	sender.sendMessage("§b§l举报 §7>> §a已传送至被举报玩家 "+rpt.getPlayer());
-		 */
 	}
 }
