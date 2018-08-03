@@ -7,10 +7,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
-import ldcr.LReport.Main;
+import ldcr.LReport.LReport;
 import ldcr.LReport.ManageGUICreator;
 import ldcr.LReport.Report;
-import ldcr.Utils.ExceptionUtils;
+import ldcr.Utils.exception.ExceptionUtils;
 
 public class ManageGUIThread implements Runnable {
 	private final ManageGUICreator creator;
@@ -20,12 +20,13 @@ public class ManageGUIThread implements Runnable {
 		this.creator = creator;
 		this.player = player;
 		this.page = page;
-		Bukkit.getScheduler().runTaskAsynchronously(Main.instance, this);
+		Bukkit.getScheduler().runTaskAsynchronously(LReport.getInstance(), this);
 	}
 	@Override
 	public void run() {
 		try {
-			final LinkedList<Report> reports = Main.instance.manager.getAllReports();
+			LReport.getInstance().getReportManager().updatePlayerCache();
+			final LinkedList<Report> reports = LReport.getInstance().getReportManager().getAllReports();
 			boolean update = true;
 			if (reports.size()<=54) {
 				page=1;
@@ -72,8 +73,9 @@ public class ManageGUIThread implements Runnable {
 				player.closeInventory();
 				player.openInventory(mainGUI);
 			}
+			LReport.getInstance().getReportManager().clearCache();
 		} catch (final SQLException ex) {
-			ExceptionUtils.printStacetrace(ex);
+			ExceptionUtils.printStacktrace(ex);
 			player.sendMessage("§b§l举报 §7>> §c错误: 数据库操作出错, 请检查后台报错.");
 		}
 	}
