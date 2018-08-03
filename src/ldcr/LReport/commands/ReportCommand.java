@@ -5,15 +5,15 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import ldcr.LReport.Main;
-import ldcr.LReport.Hook.BattlEyeHook;
+import ldcr.LReport.LReport;
+import ldcr.LReport.Hook.MatrixHook;
 import ldcr.LReport.threads.ReportThread;
 import ldcr.Utils.Bukkit.command.CommandHandler;
 
 public class ReportCommand extends CommandHandler {
 
 	public ReportCommand() {
-		super(Main.instance, "§b§l举报");
+		super(LReport.getInstance(), "§b§l举报");
 	}
 
 	@Override
@@ -24,7 +24,7 @@ public class ReportCommand extends CommandHandler {
 		}
 		if (args.length==0) {
 			sendMessage(sender,"&7/report <玩家> <原因>");
-			if (Main.instance.battlEyeHook instanceof BattlEyeHook) {
+			if (LReport.getInstance().matrixHook instanceof MatrixHook) {
 				sendMessage(sender,
 				            "§a  常见作弊: Killaura Aimbot Hitbox Reach",
 				            "§c  如果您举报为以上原因, 被举报玩家将被 §b§lBattlEye反作弊 &c检测."
