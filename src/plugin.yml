@@ -1,6 +1,6 @@
 name: LReport
 main: ldcr.LReport.LReport
-version: 6
+version: 7
 author: Ldcr
 depend: ["LdcrUtils"]
 softdepend: ["BattlEye"]

@@ -4,7 +4,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import ldcr.LReport.LReport;
-import ldcr.LReport.threads.AcceptReportThread;
+import ldcr.LReport.threads.ProcessReportThread;
 import ldcr.LReport.threads.ListReportThread;
 import ldcr.LReport.threads.ReportTeleportThread;
 import ldcr.Utils.Bukkit.command.CommandHandler;
@@ -44,7 +44,7 @@ public class ReportManagerCommand extends CommandHandler {
 				sendMessage(sender, "§a/lpt ok <举报ID> 将举报标记为已处理");
 				return;
 			}
-			new AcceptReportThread(sender,args[1]);
+			new ProcessReportThread(sender,args[1]);
 			return;
 		}
 		default: {

@@ -11,10 +11,10 @@ import ldcr.LReport.LReport;
 import ldcr.LReport.Report;
 import ldcr.Utils.exception.ExceptionUtils;
 
-public class AcceptReportThread implements Runnable {
+public class ProcessReportThread implements Runnable {
 	private final CommandSender sender;
 	private final String id;
-	public AcceptReportThread(final CommandSender sender, final String id) {
+	public ProcessReportThread(final CommandSender sender, final String id) {
 		this.sender = sender;
 		this.id = id;
 		Bukkit.getScheduler().runTaskAsynchronously(LReport.getInstance(), this);

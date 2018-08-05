@@ -25,7 +25,7 @@ public class StaffReportCommand extends CommandHandler {
 			return;
 		}
 		if (args.length==0) {
-			sendMessage(sender,"&7/staff <玩家> <原因>");
+			sendMessage(sender,"&7/staff <玩家> <原因>   &b向管理员提交对玩家的处罚申请");
 			return;
 		}
 		final OfflinePlayer offp = Bukkit.getOfflinePlayer(args[0]);
@@ -35,7 +35,19 @@ public class StaffReportCommand extends CommandHandler {
 		}
 		if (sender.hasPermission("lreport.staff")) {
 			// do fast staff
-			MessageBuilder.sendPunishSuggest((Player) sender, new Report("#NULL", offp.getName(), sender.getName(), "STAFF PUNISHING", 0, "NULL", "NULL", offp.getName(), true));
+			String reason = null;
+			if (args.length>1) {
+				final StringBuilder builder = new StringBuilder();
+				for (int i = 1;i<args.length;i++) {
+					builder.append(args[i]);
+					builder.append(' ');
+				}
+				reason = builder.toString();
+			} else {
+				sendMessage(sender, "§c请提供处罚原因.");
+				return;
+			}
+			MessageBuilder.sendPunishSuggest((Player) sender, new Report("#NULL", offp.getName(), sender.getName(), reason, 0, "NULL", "NULL", offp.getName(), true));
 		} else {
 			String reason = null;
 			if (args.length>1) {
@@ -46,7 +58,7 @@ public class StaffReportCommand extends CommandHandler {
 				}
 				reason = builder.toString();
 			} else {
-				sendMessage(sender, "§c请提供举报原因.");
+				sendMessage(sender, "§c请提供准确的处罚原因.");
 				return;
 			}
 			new StaffReportThread(sender,offp,reason);

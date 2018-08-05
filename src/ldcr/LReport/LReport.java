@@ -45,7 +45,7 @@ public class LReport extends JavaPlugin implements Listener {
 	@Override
 	public void onEnable() {
 		instance = this;
-		LdcrUtils.requireVersion(31);
+		LdcrUtils.requireVersion(this, 33);
 		logger = Bukkit.getConsoleSender();
 		loadConfig();
 		specListener = new SpecListener();

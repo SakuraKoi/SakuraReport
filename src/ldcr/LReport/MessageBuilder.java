@@ -2,6 +2,7 @@ package ldcr.LReport;
 
 import org.bukkit.entity.Player;
 
+import ldcr.Utils.Bukkit.TextComponentUtils;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -10,89 +11,104 @@ import net.md_5.bungee.api.chat.TextComponent;
 
 public class MessageBuilder {
 	public static void sendPunishSuggest(final Player player, final Report report) {
-		final BaseComponent line = new TextComponent("§c§l处罚 §7>> §b§l-----------------------------");
-		final BaseComponent line1;
-		final BaseComponent suggest = new TextComponent("§c§l处罚 §7>> §b处罚原因: §c"+report.getReason());
-		final BaseComponent line2; // autoclicker
-		final BaseComponent line3; // cheating
-		final BaseComponent line4; // spam
-		final BaseComponent line5; // ads
+		final String reason = report.getReason();
+		final TextComponent prefix = new TextComponent("§c§l处罚 §7>> §b§l-----------------------------");
+		final TextComponent staff_info;
+		final TextComponent staff_reason = new TextComponent("§c§l处罚 §7>> §b处罚原因: §c"+reason);
+		final TextComponent template_kick;
+		final TextComponent template_mute;
+		final TextComponent template_ban;
+		final TextComponent template_ipban;
 		{
-			final TextComponent reason = new TextComponent("§c§l处罚 §7>> §b志愿者 §a"+report.getReporter()+" §b对玩家 §c"+report.getDisplayPlayerName()+" §b的处罚申请  ");
-			final TextComponent viewHistory = new TextComponent("§6§l『查看处罚记录』");
-			viewHistory.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new BaseComponent[] {
-					new TextComponent("§a点击查看处罚记录")}));
+			final TextComponent info = new TextComponent(TextComponent.fromLegacyText("§c§l处罚 §7>> §b志愿者 §a"+report.getReporter()+" §b对玩家 §c"+report.getDisplayPlayerName()+" §b的处罚申请  "));
+			final TextComponent viewHistory = new TextComponent(TextComponent.fromLegacyText("§6『§l查看处罚记录§6』"));
+			viewHistory.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, TextComponent.fromLegacyText("§a点击查看处罚记录")));
 			viewHistory.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/history "+report.getPlayer()));
-			line1 =  new TextComponent(reason, viewHistory);
+			staff_info =  new TextComponent(info, viewHistory);
 		}
 		{
-			final TextComponent autoClicker = new TextComponent(" §c§l--> 连点 ");
-			final TextComponent time1 = new TextComponent(" §e第一次");
-			time1.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new BaseComponent[] {
-					new TextComponent("§a玩家 §e"+report.getPlayer()+" §a将被 §c封禁三天: 连点")}));
-			time1.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tempipban "+report.getPlayer()+" 3days AutoClicker"));
-			final TextComponent time2 = new TextComponent(" §e第二次");
-			time2.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new BaseComponent[] {
-					new TextComponent("§a玩家 §e"+report.getPlayer()+" §a将被 §c封禁七天: 连点")}));
-			time2.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tempipban "+report.getPlayer()+" 7days AutoClicker"));
-			final TextComponent time3 = new TextComponent(" §e第三次");
-			time3.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new BaseComponent[] {
-					new TextComponent("§a玩家 §e"+report.getPlayer()+" §a将被 §c封禁一月: 连点")}));
-			time3.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tempipban "+report.getPlayer()+" 30days AutoClicker"));
-			line2 = new TextComponent(autoClicker, time1, time2, time3);
+			final TextComponent kick = new TextComponent(TextComponent.fromLegacyText(" §c§l--> 踢出 "));
+			final TextComponent button_1 = new TextComponent(TextComponent.fromLegacyText(" §e踢出该玩家"));
+			button_1.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, TextComponent.fromLegacyText("§a玩家 §e"+report.getPlayer()+" §a将被 §c踢出游戏")));
+			button_1.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/kick "+report.getPlayer()+" "+reason));
+			template_kick = new TextComponent(kick, button_1);
 		}
 		{
-			final TextComponent cheat = new TextComponent(" §c§l--> 作弊 ");
-			final TextComponent time1 = new TextComponent(" §e第一次");
-			time1.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new BaseComponent[] {
-					new TextComponent("§a玩家 §e"+report.getPlayer()+" §a将被 §c封禁一月: 作弊")}));
-			time1.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tempipban "+report.getPlayer()+" 30days Hacking"));
-			final TextComponent time2 = new TextComponent(" §e第二次");
-			time2.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new BaseComponent[] {
-					new TextComponent("§a玩家 §e"+report.getPlayer()+" §a将被 §c永久封禁: 作弊")}));
-			time2.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/ipban "+report.getPlayer()+" Hacking"));
-			line3 = new TextComponent(cheat, time1, time2);
+			final TextComponent mute = new TextComponent(TextComponent.fromLegacyText(" §c§l--> 禁言 "));
+			final TextComponent button_1 = new TextComponent(TextComponent.fromLegacyText(" §e一分钟"));
+			button_1.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, TextComponent.fromLegacyText("§a玩家 §e"+report.getPlayer()+" §a将被 §c禁言 一分钟")));
+			button_1.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tempmute "+report.getPlayer()+" 1min "+reason));
+			final TextComponent button_2 = new TextComponent(TextComponent.fromLegacyText(" §e一小时"));
+			button_2.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, TextComponent.fromLegacyText("§a玩家 §e"+report.getPlayer()+" §a将被 §c禁言 一小时")));
+			button_2.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tempmute "+report.getPlayer()+" 1h "+reason));
+			final TextComponent button_3 = new TextComponent(TextComponent.fromLegacyText(" §e一天"));
+			button_3.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, TextComponent.fromLegacyText("§a玩家 §e"+report.getPlayer()+" §a将被 §c禁言 一天")));
+			button_3.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tempmute "+report.getPlayer()+" 1day "+reason));
+			final TextComponent button_4 = new TextComponent(TextComponent.fromLegacyText(" §e七天"));
+			button_4.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, TextComponent.fromLegacyText("§a玩家 §e"+report.getPlayer()+" §a将被 §c禁言 七天")));
+			button_4.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tempmute "+report.getPlayer()+" 7day "+reason));
+			template_mute = new TextComponent(mute, button_1, button_2, button_3, button_4);
 		}
 		{
-			final TextComponent spam = new TextComponent(" §c§l--> 刷屏 ");
-			final TextComponent time1 = new TextComponent(" §e第一次");
-			time1.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new BaseComponent[] {
-					new TextComponent("§a玩家 §e"+report.getPlayer()+" §a将被 §c封禁一天: 刷屏")}));
-			time1.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tempipban "+report.getPlayer()+" 1days 请勿刷屏"));
-			final TextComponent time2 = new TextComponent(" §e第二次");
-			time2.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new BaseComponent[] {
-					new TextComponent("§a玩家 §e"+report.getPlayer()+" §a将被 §c封禁三天: 刷屏")}));
-			time2.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tempipban "+report.getPlayer()+" 3days 请勿刷屏"));
-			final TextComponent time3 = new TextComponent(" §e第三次");
-			time3.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new BaseComponent[] {
-					new TextComponent("§a玩家 §e"+report.getPlayer()+" §a将被 §c封禁七天: 刷屏")}));
-			time3.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tempipban "+report.getPlayer()+" 7days 请勿刷屏"));
-			line4 = new TextComponent(spam, time1, time2, time3);
+			final TextComponent ban = new TextComponent(TextComponent.fromLegacyText(" §c§l--> 封禁 "));
+			final TextComponent button_1 = new TextComponent(TextComponent.fromLegacyText(" §e一天"));
+			button_1.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, TextComponent.fromLegacyText("§a玩家 §e"+report.getPlayer()+" §a将被 §c封禁 一天")));
+			button_1.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tempban "+report.getPlayer()+" 1day "+reason));
+			final TextComponent button_2 = new TextComponent(TextComponent.fromLegacyText(" §e七天"));
+			button_2.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, TextComponent.fromLegacyText("§a玩家 §e"+report.getPlayer()+" §a将被 §c封禁 七天")));
+			button_2.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tempban "+report.getPlayer()+" 7day "+reason));
+			final TextComponent button_3 = new TextComponent(TextComponent.fromLegacyText(" §e三十天"));
+			button_3.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, TextComponent.fromLegacyText("§a玩家 §e"+report.getPlayer()+" §a将被 §c封禁 三十天")));
+			button_3.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tempban "+report.getPlayer()+" 30day "+reason));
+			final TextComponent button_4 = new TextComponent(TextComponent.fromLegacyText(" §e永久"));
+			button_4.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, TextComponent.fromLegacyText("§a玩家 §e"+report.getPlayer()+" §a将被 §c永久封禁")));
+			button_4.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/ban "+report.getPlayer()+" "+reason));
+			template_ban = new TextComponent(ban, button_1, button_2, button_3, button_4);
 		}
 		{
-			final TextComponent ads = new TextComponent(" §c§l--> 广告 ");
-			final TextComponent time1 = new TextComponent(" §e第一次");
-			time1.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new BaseComponent[] {
-					new TextComponent("§a玩家 §e"+report.getPlayer()+" §a将被 §c封禁三天: 广告")}));
-			time1.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tempipban "+report.getPlayer()+" 3days 广告宣传"));
-			final TextComponent time2 = new TextComponent(" §e第二次");
-			time2.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new BaseComponent[] {
-					new TextComponent("§a玩家 §e"+report.getPlayer()+" §a将被 §c封禁十五天: 广告")}));
-			time2.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tempipban "+report.getPlayer()+" 15days 广告宣传"));
-			final TextComponent time3 = new TextComponent(" §e第三次");
-			time3.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new BaseComponent[] {
-					new TextComponent("§a玩家 §e"+report.getPlayer()+" §a将被 §c封禁一月: 广告")}));
-			time3.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tempipban "+report.getPlayer()+" 30days 广告宣传"));
-			line5 = new TextComponent(ads, time1, time2, time3);
+			final TextComponent ipban = new TextComponent(TextComponent.fromLegacyText(" §c§l--> 封禁 "));
+			final TextComponent button_1 = new TextComponent(TextComponent.fromLegacyText(" §e一天"));
+			button_1.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, TextComponent.fromLegacyText("§a玩家 §e"+report.getPlayer()+" §a将被 §cIP封禁 一天")));
+			button_1.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tempipban "+report.getPlayer()+" 1day "+reason));
+			final TextComponent button_2 = new TextComponent(TextComponent.fromLegacyText(" §e七天"));
+			button_2.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, TextComponent.fromLegacyText("§a玩家 §e"+report.getPlayer()+" §a将被 §cIP封禁 七天")));
+			button_2.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tempipban "+report.getPlayer()+" 7day "+reason));
+			final TextComponent button_3 = new TextComponent(TextComponent.fromLegacyText(" §e三十天"));
+			button_3.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, TextComponent.fromLegacyText("§a玩家 §e"+report.getPlayer()+" §a将被 §cIP封禁 三十天")));
+			button_3.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tempipban "+report.getPlayer()+" 30day "+reason));
+			final TextComponent button_4 = new TextComponent(TextComponent.fromLegacyText(" §e永久"));
+			button_4.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, TextComponent.fromLegacyText("§a玩家 §e"+report.getPlayer()+" §a将被 §c永久封禁IP")));
+			button_4.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/ipban "+report.getPlayer()+" "+reason));
+			template_ipban = new TextComponent(ipban, button_1, button_2, button_3, button_4);
 		}
-		player.spigot().sendMessage(line);
-		player.spigot().sendMessage(line1);
-		player.spigot().sendMessage(suggest);
-		player.spigot().sendMessage(line);
-		player.spigot().sendMessage(line2);
-		player.spigot().sendMessage(line3);
-		player.spigot().sendMessage(line4);
-		player.spigot().sendMessage(line5);
-		player.spigot().sendMessage(line);
+		BaseComponent suffix;
+		if (report.getID().equals("#NULL")) {
+			suffix = prefix.duplicate();
+		} else {
+			final TextComponent processReport = new TextComponent(TextComponent.fromLegacyText("§a『§l标记处罚已处理§a』"));
+			processReport.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, TextComponent.fromLegacyText("§a点击标记此处罚已处理")));
+			processReport.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/lpt ok "+report.getID()));
+			suffix = new TextComponent(prefix, processReport);
+		}
+		TextComponentUtils.sendMessage(player,
+		                               prefix,
+		                               staff_info,
+		                               staff_reason,
+		                               prefix,
+		                               template_kick,
+		                               template_mute,
+		                               template_ban,
+		                               template_ipban,
+		                               suffix
+				);
+		/*player.spigot().sendMessage(prefix);
+		player.spigot().sendMessage(staff_info);
+		player.spigot().sendMessage(staff_reason);
+		player.spigot().sendMessage(prefix);
+		player.spigot().sendMessage(template_kick);
+		player.spigot().sendMessage(template_mute);
+		player.spigot().sendMessage(template_ban);
+		player.spigot().sendMessage(template_ipban);
+		player.spigot().sendMessage(prefix);*/
 	}
 }
