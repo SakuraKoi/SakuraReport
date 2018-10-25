@@ -52,7 +52,6 @@ public class ManageGUIListener implements Listener {
 							clicker.sendMessage("§b§l 举报 §7>> §c你没有权限处理处罚申请.");
 						}
 						clicker.closeInventory();
-						return;
 					} else {
 						String server;
 						try {
@@ -69,7 +68,7 @@ public class ManageGUIListener implements Listener {
 							return;
 						}
 						LReport.getInstance();
-						if (LReport.serverID.equals(server)) {
+						if (LReport.getServerID().equals(server)) {
 							final OfflinePlayer offp = Bukkit.getOfflinePlayer(rpt.getPlayer());
 							if (offp==null) {
 								clicker.sendMessage("§b§l 举报 §7>> §c被举报玩家 §6"+rpt.getPlayer()+" §c不在线.");
@@ -81,24 +80,20 @@ public class ManageGUIListener implements Listener {
 								clicker.closeInventory();
 								return;
 							}
-							LReport.getInstance().specListener.spec(clicker, offp.getPlayer());
+							LReport.getInstance().getSpecListener().spec(clicker, offp.getPlayer());
 							clicker.sendMessage("§b§l 举报 §7>> §a已将您传送到被举报玩家 §6"+rpt.getPlayer()+" §a所在位置.");
 							clicker.closeInventory();
-							return;
 						} else {
 							LReport.getInstance().getMessageChannel().jumpServer(clicker, server);
 							clicker.sendMessage("§b§l 举报 §7>> §a正在将您传送到被举报玩家所在的 §6"+server+" §a服务器.");
 							clicker.closeInventory();
-							return;
 						}
 					}
 				} else if (e.getAction() == InventoryAction.PICKUP_HALF) { // 右键
-					if (rpt.isStaffReport()) {
-						if(!clicker.hasPermission("lreport.staff")) {
-							clicker.sendMessage("§b§l 举报 §7>> §c你没有权限处理处罚申请.");
-							clicker.closeInventory();
-							return;
-						}
+					if (rpt.isStaffReport() && !clicker.hasPermission("lreport.staff")) {
+						clicker.sendMessage("§b§l 举报 §7>> §c你没有权限处理处罚申请.");
+						clicker.closeInventory();
+						return;
 					}
 					try {
 						LReport.getInstance().getReportManager().deleteReport(id);
@@ -109,21 +104,20 @@ public class ManageGUIListener implements Listener {
 							clicker.sendMessage("§b§l举报 §7>> §e警告: 广播时发生数据库错误");
 							return;
 						}
-						LReport.getInstance().guiCreator.openManageGUI(clicker, LReport.getInstance().guiCreator.getPage(e.getInventory()));
+						LReport.getInstance().getGuiCreator().openManageGUI(clicker, LReport.getInstance().getGuiCreator().getPage(e.getInventory()));
 						clicker.sendMessage("§b§l 举报 §7>> §a举报 §6"+id+" §a已处理.");
 					} catch (final SQLException ex) {
 						ExceptionUtils.printStacktrace(ex);
 						clicker.sendMessage("§b§l 举报 §7>> §c错误: 处理举报时发生数据库错误.");
 						clicker.closeInventory();
-						return;
 					}
 				}
 			} else if (e.getCurrentItem().getType()==Material.GLOWSTONE) { // next or pre page
 				final int page = e.getInventory().getItem(49).getItemMeta().getEnchantLevel(Enchantment.DURABILITY);
 				if (e.getSlot()==46) { // pre
-					LReport.getInstance().guiCreator.openManageGUI(clicker, page-1);
+					LReport.getInstance().getGuiCreator().openManageGUI(clicker, page-1);
 				} else if (e.getSlot()==52) { //next
-					LReport.getInstance().guiCreator.openManageGUI(clicker, page+1);
+					LReport.getInstance().getGuiCreator().openManageGUI(clicker, page+1);
 				}
 			}
 

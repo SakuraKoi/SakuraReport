@@ -26,36 +26,35 @@ public class DatabaseMessageChannel extends MysqlMessageChannel implements IMess
 				switch (type.getAsInt()) {
 				case 1: { // report
 					processor.onReceiveBroadcastReport(
-					                                   json.get("player").getAsString(),
-					                                   json.get("reporter").getAsString(),
-					                                   json.get("reason").getAsString(),
-					                                   json.get("server").getAsString()
+							json.get("player").getAsString(),
+							json.get("reporter").getAsString(),
+							json.get("reason").getAsString(),
+							json.get("server").getAsString()
 							);
 					return;
 				}
 				case 2: { // staff
 					processor.onReceiveBroadcastStaff(
-					                                  json.get("player").getAsString(),
-					                                  json.get("reporter").getAsString(),
-					                                  json.get("reason").getAsString(),
-					                                  json.get("server").getAsString()
+							json.get("player").getAsString(),
+							json.get("reporter").getAsString(),
+							json.get("reason").getAsString(),
+							json.get("server").getAsString()
 							);
 					return;
 				}
 				case 3: { // process
 					processor.onReceiveBroadcastProcessed(
-					                                      json.get("player").getAsString(),
-					                                      json.get("reporter").getAsString(),
-					                                      json.get("processor").getAsString()
+							json.get("player").getAsString(),
+							json.get("reporter").getAsString(),
+							json.get("processor").getAsString()
 							);
 					return;
 				}
+				default:
 				}
 			}
-			return;
 		}
 		LReport.sendConsoleMessage("&e警告: 广播信道收到异常数据");
-		return;
 	}
 	@Override
 	public void jumpServer(final Player player, final String server) {

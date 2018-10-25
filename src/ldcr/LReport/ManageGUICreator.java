@@ -50,7 +50,7 @@ public class ManageGUICreator {
 			final ItemStack item = new Wool(DyeColor.LIGHT_BLUE).toItemStack(1);
 			final ItemMeta meta = item.getItemMeta();
 			meta.setDisplayName("§6§l举报 "+rpt.getID());
-			final LinkedList<String> lore = new LinkedList<String>();
+			final LinkedList<String> lore = new LinkedList<>();
 			lore.add("");
 			lore.add("§b待处理玩家: §c"+rpt.getDisplayPlayerName());
 			lore.add("§b提交志愿者: §e"+rpt.getReporter());
@@ -66,17 +66,16 @@ public class ManageGUICreator {
 			return item;
 		} else {
 			String server;
-			final boolean error = false;
 			server = LReport.getInstance().getReportManager().getCachedPlayerServer(rpt.getPlayer());
 			boolean isOnReportServer = false;
 			final boolean isOnline = server!=null;
 			if (isOnline) {
 				isOnReportServer = rpt.getServerID().equals(server);
 			}
-			final ItemStack item = new Wool(error ? DyeColor.RED : isOnline ? (isOnReportServer ? DyeColor.LIME : DyeColor.YELLOW) : DyeColor.SILVER).toItemStack(1);
+			final ItemStack item = new Wool(isOnline ? isOnReportServer ? DyeColor.LIME : DyeColor.YELLOW : DyeColor.SILVER).toItemStack(1);
 			final ItemMeta meta = item.getItemMeta();
 			meta.setDisplayName("§6§l举报 "+rpt.getID());
-			final LinkedList<String> lore = new LinkedList<String>();
+			final LinkedList<String> lore = new LinkedList<>();
 			lore.add("");
 			lore.add("§b被举报玩家: §c"+rpt.getDisplayPlayerName());
 			lore.add("§b举报者: §e"+rpt.getReporter());
@@ -84,7 +83,7 @@ public class ManageGUICreator {
 			lore.add("§b所在服务器: §e"+rpt.getDisplayServer());
 			lore.add("§b举报时间: §e"+formatTime(rpt.getTime()));
 			lore.add("");
-			lore.add(error ? "§c数据库错误" : isOnReportServer ? "§a被举报玩家当前在线" : (isOnline ? "§e被举报玩家不在当时的服务器" : "§7被举报玩家当前不在线"));
+			lore.add(isOnReportServer ? "§a被举报玩家当前在线" : isOnline ? "§e被举报玩家不在当时的服务器" : "§7被举报玩家当前不在线");
 			lore.add("");
 			lore.add("§a左键传送 §b§l| §d右键处理");
 			meta.setLore(lore);
@@ -93,7 +92,7 @@ public class ManageGUICreator {
 		}
 	}
 	public int getPage(final Inventory inv) {
-		if ((inv.getItem(49)!=null) && (inv.getItem(49).getType()==Material.PAPER))
+		if (inv.getItem(49)!=null && inv.getItem(49).getType()==Material.PAPER)
 			return inv.getItem(49).getItemMeta().getEnchantLevel(Enchantment.DURABILITY);
 		else return 1;
 	}

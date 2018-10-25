@@ -38,17 +38,16 @@ public class ReportThread implements Runnable {
 			if (!player.isOnline()) {
 				reporter.sendMessage("§b§l举报 §7>> §c注意: 该玩家不在线, 是否打错ID?");
 			} else {
-				if (isCheatReason(reason)) {
-					LReport.getInstance().matrixHook.active(player.getPlayer(),reporter);
+				if (isCheatReason(reason) && LReport.getInstance().getAntiCheatHook()!=null) {
+					LReport.getInstance().getAntiCheatHook().active(player.getPlayer(),reporter);
 				}
 			}
 			try {
-				LReport.getInstance().getMessageChannel().broadcastReport(player.getName(), (Player) reporter, LReport.displayServer, reason);
+				LReport.getInstance().getMessageChannel().broadcastReport(player.getName(), (Player) reporter, LReport.getDisplayServerName(), reason);
 			} catch (final IOException e) {
 				ExceptionUtils.printStacktrace(e);
 				reporter.sendMessage("§b§l举报 §7>> §e发生数据库错误, 请联系管理员");
 			}
-			return;
 		} catch (final SQLException ex) {
 			ExceptionUtils.printStacktrace(ex);
 			reporter.sendMessage("§b§l举报 §7>> §c举报失败: 数据库错误, 请联系管理员");
@@ -60,7 +59,7 @@ public class ReportThread implements Runnable {
 		}
 		return false;
 	}
-	private static ArrayList<String> cheatReason = new ArrayList<String>(Arrays.asList(new String[] {
+	private static ArrayList<String> cheatReason = new ArrayList<>(Arrays.asList(
 			"killaura",
 			"ka",
 			"杀戮",
@@ -74,5 +73,5 @@ public class ReportThread implements Runnable {
 			"reach",
 			"攻击距离",
 			"距离"
-	}));
+			));
 }

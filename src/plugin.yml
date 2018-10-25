@@ -1,9 +1,8 @@
 name: LReport
 main: ldcr.LReport.LReport
-version: 7
+version: 8
 author: Ldcr
 depend: ["LdcrUtils"]
-softdepend: ["BattlEye"]
 commands:
   report:
   crpt:

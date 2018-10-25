@@ -32,7 +32,7 @@ public class BungeecordMessageChannel implements PluginMessageListener, IMessage
 				in.readFully(msgbytes);
 				final DataInputStream msgin = new DataInputStream(new ByteArrayInputStream(msgbytes));
 				final long timestamp = msgin.readLong();
-				if (System.currentTimeMillis() > (timestamp+2000)) return;
+				if (System.currentTimeMillis() > timestamp+2000) return;
 				final String cheater = msgin.readUTF();
 				final String reporter = msgin.readUTF();
 				final String reason = msgin.readUTF();
@@ -44,7 +44,7 @@ public class BungeecordMessageChannel implements PluginMessageListener, IMessage
 				in.readFully(msgbytes);
 				final DataInputStream msgin = new DataInputStream(new ByteArrayInputStream(msgbytes));
 				final long timestamp = msgin.readLong();
-				if (System.currentTimeMillis() > (timestamp+2000)) return;
+				if (System.currentTimeMillis() > timestamp+2000) return;
 				final String cheater = msgin.readUTF();
 				final String reporter = msgin.readUTF();
 				final String admin = msgin.readUTF();
@@ -55,14 +55,14 @@ public class BungeecordMessageChannel implements PluginMessageListener, IMessage
 				in.readFully(msgbytes);
 				final DataInputStream msgin = new DataInputStream(new ByteArrayInputStream(msgbytes));
 				final long timestamp = msgin.readLong();
-				if (System.currentTimeMillis() > (timestamp+2000)) return;
+				if (System.currentTimeMillis() > timestamp+2000) return;
 				final String cheater = msgin.readUTF();
 				final String reporter = msgin.readUTF();
 				final String reason = msgin.readUTF();
 				final String server = msgin.readUTF();
 				processor.onReceiveBroadcastStaff(cheater, reporter, reason, server);
 			}
-		} catch (final IOException e) {}
+		} catch (final IOException ignored) {}
 	}
 
 	@Override
@@ -83,7 +83,7 @@ public class BungeecordMessageChannel implements PluginMessageListener, IMessage
 			out.write(msgbytes.toByteArray());
 			reporter.sendPluginMessage(LReport.getInstance(), "BungeeCord", out.toByteArray());
 			processor.onReceiveBroadcastReport(player, reporter.getName(), reason, server);
-		} catch (final Exception e) {}
+		} catch (final Exception ignored) {}
 	}
 	@Override
 	public void broadcastConsoleReport(final String player, final String server, final String reason) {
@@ -110,7 +110,7 @@ public class BungeecordMessageChannel implements PluginMessageListener, IMessage
 			out.write(msgbytes.toByteArray());
 			sender.sendPluginMessage(LReport.getInstance(), "BungeeCord", out.toByteArray());
 			processor.onReceiveBroadcastReport(player, "Console", reason, server);
-		} catch (final Exception e) {}
+		} catch (final Exception ignored) {}
 	}
 	@Override
 	public void broadcastStaff(final String player, final Player reporter, final String server, final String reason) {
@@ -133,7 +133,7 @@ public class BungeecordMessageChannel implements PluginMessageListener, IMessage
 			out.write(msgbytes.toByteArray());
 			reporter.sendPluginMessage(LReport.getInstance(), "BungeeCord", out.toByteArray());
 			processor.onReceiveBroadcastStaff(player, reporter.getDisplayName(), reason, server);
-		} catch (final Exception e) {}
+		} catch (final Exception ignored) {}
 	}
 	@Override
 	public void broadcastProcessed(final String player, final String reporter, final Player executor) {
@@ -155,7 +155,7 @@ public class BungeecordMessageChannel implements PluginMessageListener, IMessage
 			out.write(msgbytes.toByteArray());
 			executor.sendPluginMessage(LReport.getInstance(), "BungeeCord", out.toByteArray());
 			processor.onReceiveBroadcastProcessed(player, reporter, executor.getName());
-		} catch (final Exception e) {}
+		} catch (final Exception ignored) {}
 	}
 
 	@Override

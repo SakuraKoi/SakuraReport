@@ -44,7 +44,7 @@ public class ReportTeleportThread implements Runnable {
 				return;
 			}
 			LReport.getInstance();
-			if (LReport.serverID.equals(server)) {
+			if (LReport.getServerID().equals(server)) {
 				final OfflinePlayer offp = Bukkit.getOfflinePlayer(rpt.getPlayer());
 				if (offp==null) {
 					player.sendMessage("§b§l举报 §7>> §c被举报玩家 §6"+rpt.getPlayer()+" §c不在线.");
@@ -56,15 +56,13 @@ public class ReportTeleportThread implements Runnable {
 					player.closeInventory();
 					return;
 				}
-				LReport.getInstance().specListener.spec(player, offp.getPlayer());
+				LReport.getInstance().getSpecListener().spec(player, offp.getPlayer());
 				player.sendMessage("§b§l举报 §7>> §a已将您传送到被举报玩家 §6"+rpt.getPlayer()+" §a所在位置.");
 				player.closeInventory();
-				return;
 			} else {
 				LReport.getInstance().getMessageChannel().jumpServer(player, server);
 				player.sendMessage("§b§l举报 §7>> §a正在将您传送到被举报玩家所在的 §6"+server+" §a服务器.");
 				player.closeInventory();
-				return;
 			}
 		} catch (final SQLException ex) {
 			ExceptionUtils.printStacktrace(ex);

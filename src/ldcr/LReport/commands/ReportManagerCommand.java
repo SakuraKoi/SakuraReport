@@ -4,8 +4,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import ldcr.LReport.LReport;
-import ldcr.LReport.threads.ProcessReportThread;
 import ldcr.LReport.threads.ListReportThread;
+import ldcr.LReport.threads.ProcessReportThread;
 import ldcr.LReport.threads.ReportTeleportThread;
 import ldcr.Utils.Bukkit.command.CommandHandler;
 
@@ -23,7 +23,7 @@ public class ReportManagerCommand extends CommandHandler {
 			return;
 		}
 		if (args.length==0) {
-			LReport.getInstance().guiCreator.openManageGUI((Player) sender);
+			LReport.getInstance().getGuiCreator().openManageGUI((Player) sender);
 			return;
 		}
 		switch (args[0].toLowerCase()) {
@@ -49,10 +49,9 @@ public class ReportManagerCommand extends CommandHandler {
 		}
 		default: {
 			sendMessage(sender,
-			            "§a/lpt list       列出所有未处理举报",
-			            "§a/lpt tp <举报ID> 传送到被举报玩家",
+					"§a/lpt list       列出所有未处理举报",
+					"§a/lpt tp <举报ID> 传送到被举报玩家",
 					"§a/lpt ok <举报ID> 将举报标记为已处理");
-			return;
 		}
 		}
 	}

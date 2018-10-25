@@ -30,12 +30,11 @@ public class StaffReportThread implements Runnable {
 				reporter.sendMessage("§b§l举报 §7>> §c注意: 该玩家不在线, 是否打错ID?");
 			}
 			try {
-				LReport.getInstance().getMessageChannel().broadcastStaff(player.isOnline()? player.getPlayer().getDisplayName() : player.getName(), (Player) reporter, LReport.displayServer, reason);
+				LReport.getInstance().getMessageChannel().broadcastStaff(player.isOnline()? player.getPlayer().getDisplayName() : player.getName(), (Player) reporter, LReport.getDisplayServerName(), reason);
 			} catch (final IOException e) {
 				ExceptionUtils.printStacktrace(e);
 				reporter.sendMessage("§b§l举报 §7>> §e警告: 广播时发生数据库错误");
 			}
-			return;
 		} catch (final SQLException ex) {
 			ExceptionUtils.printStacktrace(ex);
 			reporter.sendMessage("§b§l举报 §7>> §c举报失败: 数据库错误, 请联系管理员");

@@ -13,27 +13,22 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class SpecListener implements Listener {
-	private final HashMap<Player, SpecInfo> specLocation = new HashMap<Player, SpecInfo>();
+	private final HashMap<Player, SpecInfo> specLocation = new HashMap<>();
 
 	@EventHandler
 	public void onSneak(final PlayerToggleSneakEvent e) {
-		if (e.getPlayer().getGameMode()==GameMode.SPECTATOR) {
-			if (e.isSneaking() == true) {
-				if (specLocation.containsKey(e.getPlayer())) {
-					specLocation.get(e.getPlayer()).back();
-					specLocation.remove(e.getPlayer());
-				}
-			}
+		if (e.getPlayer().getGameMode()==GameMode.SPECTATOR && e.isSneaking() && specLocation.containsKey(e.getPlayer())) {
+			specLocation.get(e.getPlayer()).back();
+			specLocation.remove(e.getPlayer());
 		}
+
 	}
 
 	@EventHandler
 	public void onLeave(final PlayerQuitEvent e) {
-		if (e.getPlayer().getGameMode()==GameMode.SPECTATOR) {
-			if (specLocation.containsKey(e.getPlayer())) {
-				specLocation.get(e.getPlayer()).back();
-				specLocation.remove(e.getPlayer());
-			}
+		if (e.getPlayer().getGameMode()==GameMode.SPECTATOR && specLocation.containsKey(e.getPlayer())) {
+			specLocation.get(e.getPlayer()).back();
+			specLocation.remove(e.getPlayer());
 		}
 	}
 

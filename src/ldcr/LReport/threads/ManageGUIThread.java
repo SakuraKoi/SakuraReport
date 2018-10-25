@@ -1,7 +1,7 @@
 package ldcr.LReport.threads;
 
 import java.sql.SQLException;
-import java.util.LinkedList;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -26,30 +26,28 @@ public class ManageGUIThread implements Runnable {
 	public void run() {
 		try {
 			LReport.getInstance().getReportManager().updatePlayerCache();
-			final LinkedList<Report> reports = LReport.getInstance().getReportManager().getAllReports();
+			final List<Report> reports = LReport.getInstance().getReportManager().getAllReports();
 			boolean update = true;
 			if (reports.size()<=54) {
 				page=1;
 			}
 			Inventory mainGUI = Bukkit.createInventory(null, 54, "§b§l举报 §7>> §6§l举报箱 §a第 "+ page +" 页");
-			if (player.getOpenInventory() != null) {
-				if (player.getOpenInventory().getTopInventory() != null) {
-					if (player.getOpenInventory().getTopInventory().getName()!=null) {
-						if (player.getOpenInventory().getTopInventory().getName().startsWith("§b§l举报 §7>> §6§l举报箱")) {
-							final Inventory current = player.getOpenInventory().getTopInventory();
-							if (creator.getPage(current)==page) {
-								current.clear();
-								mainGUI = current;
-								update = false;
-							}
-						}
-					}
+			if (player.getOpenInventory() != null &&
+					player.getOpenInventory().getTopInventory() != null &&
+					player.getOpenInventory().getTopInventory().getName()!=null &&
+					player.getOpenInventory().getTopInventory().getName().startsWith("§b§l举报 §7>> §6§l举报箱")
+					) {
+				final Inventory current = player.getOpenInventory().getTopInventory();
+				if (creator.getPage(current)==page) {
+					current.clear();
+					mainGUI = current;
+					update = false;
 				}
 			}
 			if (reports.size() > 54) {
 				final int start = 45*(page-1);
 				final int size = reports.size()-1;
-				final boolean nextPage = !((start+45)>size);
+				final boolean nextPage = start+45<=size;
 				for (int i = start,max = start+45;i<max;i++) {
 					if (i>size) {
 						break;
