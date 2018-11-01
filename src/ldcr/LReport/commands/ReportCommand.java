@@ -16,6 +16,7 @@ public class ReportCommand extends CommandHandler {
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public void onCommand(final CommandSender sender, final String[] args) {
 		if (!(sender instanceof Player)) {
 			sendMessage(sender, "§c仅玩家可以执行此命令.");

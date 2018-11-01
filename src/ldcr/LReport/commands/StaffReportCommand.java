@@ -18,6 +18,7 @@ public class StaffReportCommand extends CommandHandler {
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public void onCommand(final CommandSender sender, final String[] args) {
 		if (checkPermission(sender, "lreport.lpt")) return;
 		if (!(sender instanceof Player)) {
