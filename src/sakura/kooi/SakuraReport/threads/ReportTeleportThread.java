@@ -1,4 +1,4 @@
-package ldcr.LReport.threads;
+package sakura.kooi.SakuraReport.threads;
 
 import java.sql.SQLException;
 
@@ -6,10 +6,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
-import ldcr.LReport.LReport;
-import ldcr.LReport.MessageBuilder;
-import ldcr.LReport.Report;
-import ldcr.Utils.exception.ExceptionUtils;
+import sakura.kooi.SakuraReport.SakuraReport;
+import sakura.kooi.SakuraReport.MessageBuilder;
+import sakura.kooi.SakuraReport.Report;
+import sakura.kooi.Utils.exception.ExceptionUtils;
 
 public class ReportTeleportThread implements Runnable {
 	private final Player player;
@@ -17,13 +17,13 @@ public class ReportTeleportThread implements Runnable {
 	public ReportTeleportThread(final Player sender, final String id) {
 		player = sender;
 		this.id = id;
-		Bukkit.getScheduler().runTaskAsynchronously(LReport.getInstance(), this);
+		Bukkit.getScheduler().runTaskAsynchronously(SakuraReport.getInstance(), this);
 	}
 	@SuppressWarnings("deprecation")
 	@Override
 	public void run() {
 		try {
-			final Report rpt = LReport.getInstance().getReportManager().getReport("#"+id);
+			final Report rpt = SakuraReport.getInstance().getReportManager().getReport("#"+id);
 			if (rpt==null) {
 				player.sendMessage("§b§l举报 §7>> §c举报不存在");
 				return;
@@ -37,14 +37,14 @@ public class ReportTeleportThread implements Runnable {
 					return;
 				}
 			}
-			final String server = LReport.getInstance().getReportManager().getPlayerServer(rpt.getPlayer());
+			final String server = SakuraReport.getInstance().getReportManager().getPlayerServer(rpt.getPlayer());
 			if(server==null) {
 				player.sendMessage("§b§l举报 §7>> §c被举报玩家 §6"+rpt.getPlayer()+" §c不在线.");
 				player.closeInventory();
 				return;
 			}
-			LReport.getInstance();
-			if (LReport.getServerID().equals(server)) {
+			SakuraReport.getInstance();
+			if (SakuraReport.getServerID().equals(server)) {
 				final OfflinePlayer offp = Bukkit.getOfflinePlayer(rpt.getPlayer());
 				if (offp==null) {
 					player.sendMessage("§b§l举报 §7>> §c被举报玩家 §6"+rpt.getPlayer()+" §c不在线.");
@@ -56,11 +56,11 @@ public class ReportTeleportThread implements Runnable {
 					player.closeInventory();
 					return;
 				}
-				LReport.getInstance().getSpecListener().spec(player, offp.getPlayer());
+				SakuraReport.getInstance().getSpecListener().spec(player, offp.getPlayer());
 				player.sendMessage("§b§l举报 §7>> §a已将您传送到被举报玩家 §6"+rpt.getPlayer()+" §a所在位置.");
 				player.closeInventory();
 			} else {
-				LReport.getInstance().getMessageChannel().jumpServer(player, server);
+				SakuraReport.getInstance().getMessageChannel().jumpServer(player, server);
 				player.sendMessage("§b§l举报 §7>> §a正在将您传送到被举报玩家所在的 §6"+server+" §a服务器.");
 				player.closeInventory();
 			}

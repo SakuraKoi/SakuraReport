@@ -1,4 +1,4 @@
-package ldcr.LReport;
+package sakura.kooi.SakuraReport;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -8,9 +8,9 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import ldcr.Utils.database.mysql.MysqlDataSource;
-import ldcr.Utils.database.mysql.Processor.HasResultProcessor;
 import lombok.Getter;
+import sakura.kooi.Utils.database.mysql.MysqlDataSource;
+import sakura.kooi.Utils.database.mysql.Processor.HasResultProcessor;
 
 public class ReportManager {
 	@Getter protected MysqlDataSource dataSource = null;
@@ -21,8 +21,8 @@ public class ReportManager {
 		if (dataSource!=null) {
 			stopConnection();
 		}
-		LReport.sendConsoleMessage("&a正在连接Mysql数据库 "+mysqlServer+":"+mysqlPort+" ...");
-		dataSource = new MysqlDataSource(mysqlServer, mysqlPort, mysqlUser, mysqlPassword, mysqlDatabase, LReport.getInstance());
+		SakuraReport.sendConsoleMessage("&a正在连接Mysql数据库 "+mysqlServer+":"+mysqlPort+" ...");
+		dataSource = new MysqlDataSource(mysqlServer, mysqlPort, mysqlUser, mysqlPassword, mysqlDatabase, SakuraReport.getInstance());
 		try {
 			dataSource.connectDatabase();
 		} catch (final SQLException e) {
@@ -40,9 +40,9 @@ public class ReportManager {
 
 	public void stopConnection() {
 		if (dataSource!=null && dataSource.isConnected()) {
-			LReport.sendConsoleMessage("&e正在关闭数据库连接...");
+			SakuraReport.sendConsoleMessage("&e正在关闭数据库连接...");
 			dataSource.disconnectDatabase();
-			LReport.sendConsoleMessage("&a举报系统已与数据库断线.");
+			SakuraReport.sendConsoleMessage("&a举报系统已与数据库断线.");
 		}
 	}
 
@@ -63,14 +63,14 @@ public class ReportManager {
 			query.setString(3, reporter);
 			query.setString(4, reason);
 			query.setLong(5, System.currentTimeMillis());
-			LReport.getInstance();
-			query.setString(6, LReport.getDisplayServerName());
-			LReport.getInstance();
-			query.setString(7, LReport.getServerID());
+			SakuraReport.getInstance();
+			query.setString(6, SakuraReport.getDisplayServerName());
+			SakuraReport.getInstance();
+			query.setString(7, SakuraReport.getServerID());
 			query.setString(8, displayPlayerName);
 			query.setBoolean(9, false);
 		});
-		//dataSource.intoValue(REPORT_TABLE_NAME, Report.generateID(),player,reporter,reason,String.valueOf(System.currentTimeMillis()),LReport.instance.getDisplayServerName(),LReport.instance.getServerID(),displayPlayerName, "false", reporter+":"+player);
+		//dataSource.intoValue(REPORT_TABLE_NAME, Report.generateID(),player,reporter,reason,String.valueOf(System.currentTimeMillis()),SakuraReport.instance.getDisplayServerName(),SakuraReport.instance.getServerID(),displayPlayerName, "false", reporter+":"+player);
 		return true;
 	}
 
@@ -81,13 +81,13 @@ public class ReportManager {
 			query.setString(3, reporter);
 			query.setString(4, reason);
 			query.setLong(5, System.currentTimeMillis());
-			LReport.getInstance();
-			query.setString(6, LReport.getDisplayServerName());
+			SakuraReport.getInstance();
+			query.setString(6, SakuraReport.getDisplayServerName());
 			query.setString(7, "#STAFF");
 			query.setString(8, displayPlayerName);
 			query.setBoolean(9, true);
 		});
-		//dataSource.intoValue(REPORT_TABLE_NAME, Report.generateID(),player,reporter,reason,String.valueOf(System.currentTimeMillis()),LReport.instance.getDisplayServerName(),"#STAFF",displayPlayerName, "true", reporter+":"+player);
+		//dataSource.intoValue(REPORT_TABLE_NAME, Report.generateID(),player,reporter,reason,String.valueOf(System.currentTimeMillis()),SakuraReport.instance.getDisplayServerName(),"#STAFF",displayPlayerName, "true", reporter+":"+player);
 	}
 
 	public Report getReport(final String id) throws SQLException {
@@ -134,18 +134,18 @@ public class ReportManager {
 	public void playerOnline(final String player) throws SQLException {
 		dataSource.update("INSERT INTO `"+PLAYER_TABLE_NAME+"` values(null, ?, ?)", query -> {
 			query.setString(1, player.toLowerCase());
-			LReport.getInstance();
-			query.setString(2, LReport.getServerID());
+			SakuraReport.getInstance();
+			query.setString(2, SakuraReport.getServerID());
 		});
-		//dataSource.intoValue(PLAYER_TABLE_NAME, player, LReport.instance.getServerID(), LReport.instance.getServerID()+"|"+player);
+		//dataSource.intoValue(PLAYER_TABLE_NAME, player, SakuraReport.instance.getServerID(), SakuraReport.instance.getServerID()+"|"+player);
 	}
 	public void playerOffline(final String player) throws SQLException {
 		dataSource.update("DELETE FROM `"+PLAYER_TABLE_NAME+"` WHERE ( `player` = ? AND `server` = ? )", query -> {
 			query.setString(1, player.toLowerCase());
-			LReport.getInstance();
-			query.setString(2, LReport.getServerID());
+			SakuraReport.getInstance();
+			query.setString(2, SakuraReport.getServerID());
 		});
-		//dataSource.deleteValue(PLAYER_TABLE_NAME, "indexc", LReport.instance.getServerID()+"|"+player.toLowerCase());
+		//dataSource.deleteValue(PLAYER_TABLE_NAME, "indexc", SakuraReport.instance.getServerID()+"|"+player.toLowerCase());
 	}
 	public String getPlayerServer(final String player) throws SQLException {
 		return dataSource.query("SELECT * FROM `"+PLAYER_TABLE_NAME+"` WHERE `player` = ?", query -> query.setString(1, player.toLowerCase()), result -> {
@@ -157,15 +157,15 @@ public class ReportManager {
 
 	public void updatePlayerlist() throws SQLException {
 		dataSource.update("DELETE FROM `"+PLAYER_TABLE_NAME+"` WHERE `server` = ?", query -> {
-			LReport.getInstance();
-			query.setString(1, LReport.getServerID());
+			SakuraReport.getInstance();
+			query.setString(1, SakuraReport.getServerID());
 		});
-		//dataSource.deleteValue(PLAYER_TABLE_NAME, "server", LReport.instance.getServerID());
+		//dataSource.deleteValue(PLAYER_TABLE_NAME, "server", SakuraReport.instance.getServerID());
 		dataSource.updateBatch("INSERT INTO `"+PLAYER_TABLE_NAME+"` values(null, ?, ?)", query -> {
 			for (final Player player : Bukkit.getOnlinePlayers()) {
 				query.setString(1, player.getName().toLowerCase());
-				LReport.getInstance();
-				query.setString(2, LReport.getServerID());
+				SakuraReport.getInstance();
+				query.setString(2, SakuraReport.getServerID());
 				query.addBatch();
 			}
 		});
@@ -178,6 +178,7 @@ public class ReportManager {
 	}
 	private final HashMap<String, String> serverCache = new HashMap<>();
 	public void updatePlayerCache() throws SQLException {
+		serverCache.clear();
 		dataSource.query("SELECT * FROM `"+PLAYER_TABLE_NAME+"`", null, result -> {
 			while(result.next()) {
 				serverCache.put(result.getString("player"), result.getString("server"));

@@ -1,4 +1,4 @@
-package ldcr.LReport;
+package sakura.kooi.SakuraReport;
 
 import java.util.Random;
 

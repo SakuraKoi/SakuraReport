@@ -1,4 +1,4 @@
-package ldcr.LReport.threads;
+package sakura.kooi.SakuraReport.threads;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -10,8 +10,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import ldcr.LReport.LReport;
-import ldcr.Utils.exception.ExceptionUtils;
+import sakura.kooi.SakuraReport.SakuraReport;
+import sakura.kooi.Utils.exception.ExceptionUtils;
 
 public class ReportThread implements Runnable {
 	private final CommandSender reporter;
@@ -21,7 +21,7 @@ public class ReportThread implements Runnable {
 		this.reporter = reporter;
 		this.player = player;
 		this.reason = reason;
-		Bukkit.getScheduler().runTaskAsynchronously(LReport.getInstance(), this);
+		Bukkit.getScheduler().runTaskAsynchronously(SakuraReport.getInstance(), this);
 	}
 	@Override
 	public void run() {
@@ -30,7 +30,7 @@ public class ReportThread implements Runnable {
 			return;
 		}
 		try {
-			if (!LReport.getInstance().getReportManager().addReport(player.getName(), reporter.getName(), reason, player.isOnline()? player.getPlayer().getDisplayName() : "[Offline] "+player.getName())) {
+			if (!SakuraReport.getInstance().getReportManager().addReport(player.getName(), reporter.getName(), reason, player.isOnline()? player.getPlayer().getDisplayName() : "[Offline] "+player.getName())) {
 				reporter.sendMessage("§b§l举报 §7>> §a您已举报过玩家 "+player.getName()+", 请等待管理员处理...");
 				return;
 			}
@@ -38,12 +38,12 @@ public class ReportThread implements Runnable {
 			if (!player.isOnline()) {
 				reporter.sendMessage("§b§l举报 §7>> §c注意: 该玩家不在线, 是否打错ID?");
 			} else {
-				if (isCheatReason(reason) && LReport.getInstance().getAntiCheatHook()!=null) {
-					LReport.getInstance().getAntiCheatHook().active(player.getPlayer(),reporter);
+				if (isCheatReason(reason) && SakuraReport.getInstance().getAntiCheatHook()!=null) {
+					SakuraReport.getInstance().getAntiCheatHook().active(player.getPlayer(),reporter);
 				}
 			}
 			try {
-				LReport.getInstance().getMessageChannel().broadcastReport(player.getName(), (Player) reporter, LReport.getDisplayServerName(), reason);
+				SakuraReport.getInstance().getMessageChannel().broadcastReport(player.getName(), (Player) reporter, SakuraReport.getDisplayServerName(), reason);
 			} catch (final IOException e) {
 				ExceptionUtils.printStacktrace(e);
 				reporter.sendMessage("§b§l举报 §7>> §e发生数据库错误, 请联系管理员");

@@ -1,13 +1,13 @@
-package ldcr.LReport;
+package sakura.kooi.SakuraReport;
 
 import org.bukkit.entity.Player;
 
-import ldcr.Utils.Bukkit.TextComponentUtils;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.HoverEvent.Action;
 import net.md_5.bungee.api.chat.TextComponent;
+import sakura.kooi.Utils.Bukkit.TextComponentUtils;
 
 public class MessageBuilder {
 	private MessageBuilder() {}

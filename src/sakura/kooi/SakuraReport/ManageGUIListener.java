@@ -1,4 +1,4 @@
-package ldcr.LReport;
+package sakura.kooi.SakuraReport;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -13,7 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-import ldcr.Utils.exception.ExceptionUtils;
+import sakura.kooi.Utils.exception.ExceptionUtils;
 
 public class ManageGUIListener implements Listener {
 	@SuppressWarnings("deprecation")
@@ -32,7 +32,7 @@ public class ManageGUIListener implements Listener {
 				final String id = itemName.substring(7, itemName.length());
 				Report rpt;
 				try {
-					rpt = LReport.getInstance().getReportManager().getReport(id);
+					rpt = SakuraReport.getInstance().getReportManager().getReport(id);
 				} catch (final SQLException ex) {
 					ExceptionUtils.printStacktrace(ex);
 					clicker.sendMessage("§b§l举报 §7>> §c错误: 发生数据库错误, 请检查后台报错.");
@@ -55,7 +55,7 @@ public class ManageGUIListener implements Listener {
 					} else {
 						String server;
 						try {
-							server = LReport.getInstance().getReportManager().getPlayerServer(rpt.getPlayer());
+							server = SakuraReport.getInstance().getReportManager().getPlayerServer(rpt.getPlayer());
 						} catch (final SQLException e1) {
 							clicker.sendMessage("§b§l 举报 §7>> §c错误: 发生数据库错误, 请检查后台报错.");
 							clicker.closeInventory();
@@ -67,8 +67,8 @@ public class ManageGUIListener implements Listener {
 							clicker.closeInventory();
 							return;
 						}
-						LReport.getInstance();
-						if (LReport.getServerID().equals(server)) {
+						SakuraReport.getInstance();
+						if (SakuraReport.getServerID().equals(server)) {
 							final OfflinePlayer offp = Bukkit.getOfflinePlayer(rpt.getPlayer());
 							if (offp==null) {
 								clicker.sendMessage("§b§l 举报 §7>> §c被举报玩家 §6"+rpt.getPlayer()+" §c不在线.");
@@ -80,11 +80,11 @@ public class ManageGUIListener implements Listener {
 								clicker.closeInventory();
 								return;
 							}
-							LReport.getInstance().getSpecListener().spec(clicker, offp.getPlayer());
+							SakuraReport.getInstance().getSpecListener().spec(clicker, offp.getPlayer());
 							clicker.sendMessage("§b§l 举报 §7>> §a已将您传送到被举报玩家 §6"+rpt.getPlayer()+" §a所在位置.");
 							clicker.closeInventory();
 						} else {
-							LReport.getInstance().getMessageChannel().jumpServer(clicker, server);
+							SakuraReport.getInstance().getMessageChannel().jumpServer(clicker, server);
 							clicker.sendMessage("§b§l 举报 §7>> §a正在将您传送到被举报玩家所在的 §6"+server+" §a服务器.");
 							clicker.closeInventory();
 						}
@@ -96,15 +96,15 @@ public class ManageGUIListener implements Listener {
 						return;
 					}
 					try {
-						LReport.getInstance().getReportManager().deleteReport(id);
+						SakuraReport.getInstance().getReportManager().deleteReport(id);
 						try {
-							LReport.getInstance().getMessageChannel().broadcastProcessed(rpt.getPlayer(), rpt.getReporter(), clicker);
+							SakuraReport.getInstance().getMessageChannel().broadcastProcessed(rpt.getPlayer(), rpt.getReporter(), clicker);
 						} catch (final IOException e1) {
 							ExceptionUtils.printStacktrace(e1);
 							clicker.sendMessage("§b§l举报 §7>> §e警告: 广播时发生数据库错误");
 							return;
 						}
-						LReport.getInstance().getGuiCreator().openManageGUI(clicker, LReport.getInstance().getGuiCreator().getPage(e.getInventory()));
+						SakuraReport.getInstance().getGuiCreator().openManageGUI(clicker, SakuraReport.getInstance().getGuiCreator().getPage(e.getInventory()));
 						clicker.sendMessage("§b§l 举报 §7>> §a举报 §6"+id+" §a已处理.");
 					} catch (final SQLException ex) {
 						ExceptionUtils.printStacktrace(ex);
@@ -115,9 +115,9 @@ public class ManageGUIListener implements Listener {
 			} else if (e.getCurrentItem().getType()==Material.GLOWSTONE) { // next or pre page
 				final int page = e.getInventory().getItem(49).getItemMeta().getEnchantLevel(Enchantment.DURABILITY);
 				if (e.getSlot()==46) { // pre
-					LReport.getInstance().getGuiCreator().openManageGUI(clicker, page-1);
+					SakuraReport.getInstance().getGuiCreator().openManageGUI(clicker, page-1);
 				} else if (e.getSlot()==52) { //next
-					LReport.getInstance().getGuiCreator().openManageGUI(clicker, page+1);
+					SakuraReport.getInstance().getGuiCreator().openManageGUI(clicker, page+1);
 				}
 			}
 

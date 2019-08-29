@@ -1,4 +1,4 @@
-package ldcr.LReport;
+package sakura.kooi.SakuraReport;
 
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
@@ -13,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Wool;
 
-import ldcr.LReport.threads.ManageGUIThread;
+import sakura.kooi.SakuraReport.threads.ManageGUIThread;
 
 public class ManageGUICreator {
 	public void openManageGUI(final Player player) {
@@ -66,7 +66,7 @@ public class ManageGUICreator {
 			return item;
 		} else {
 			String server;
-			server = LReport.getInstance().getReportManager().getCachedPlayerServer(rpt.getPlayer());
+			server = SakuraReport.getInstance().getReportManager().getCachedPlayerServer(rpt.getPlayer());
 			boolean isOnReportServer = false;
 			final boolean isOnline = server!=null;
 			if (isOnline) {

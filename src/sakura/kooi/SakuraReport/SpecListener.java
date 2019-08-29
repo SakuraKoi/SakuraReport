@@ -1,4 +1,4 @@
-package ldcr.LReport;
+package sakura.kooi.SakuraReport;
 
 import java.util.HashMap;
 
@@ -43,7 +43,7 @@ public class SpecListener implements Listener {
 			public void run() {
 				player.setSpectatorTarget(entity);
 			}
-		}.runTaskLater(LReport.getInstance(), 5);
+		}.runTaskLater(SakuraReport.getInstance(), 5);
 	}
 	public void backAllSpectator() {
 		for (final SpecInfo info : specLocation.values()) {

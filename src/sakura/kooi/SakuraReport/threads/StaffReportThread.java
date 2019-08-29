@@ -1,4 +1,4 @@
-package ldcr.LReport.threads;
+package sakura.kooi.SakuraReport.threads;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -8,8 +8,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import ldcr.LReport.LReport;
-import ldcr.Utils.exception.ExceptionUtils;
+import sakura.kooi.SakuraReport.SakuraReport;
+import sakura.kooi.Utils.exception.ExceptionUtils;
 
 public class StaffReportThread implements Runnable {
 	private final CommandSender reporter;
@@ -19,18 +19,18 @@ public class StaffReportThread implements Runnable {
 		this.reporter = reporter;
 		this.player = player;
 		this.reason = reason;
-		Bukkit.getScheduler().runTaskAsynchronously(LReport.getInstance(), this);
+		Bukkit.getScheduler().runTaskAsynchronously(SakuraReport.getInstance(), this);
 	}
 	@Override
 	public void run() {
 		try {
-			LReport.getInstance().getReportManager().addStaffReport(player.getName(), reporter.getName(), reason, player.isOnline()? player.getPlayer().getDisplayName() : player.getName());
+			SakuraReport.getInstance().getReportManager().addStaffReport(player.getName(), reporter.getName(), reason, player.isOnline()? player.getPlayer().getDisplayName() : player.getName());
 			reporter.sendMessage("§b§l举报 §7>> §a已提交对玩家 "+player.getName()+" 的处罚申请.");
 			if (!player.isOnline()) {
 				reporter.sendMessage("§b§l举报 §7>> §c注意: 该玩家不在线, 是否打错ID?");
 			}
 			try {
-				LReport.getInstance().getMessageChannel().broadcastStaff(player.isOnline()? player.getPlayer().getDisplayName() : player.getName(), (Player) reporter, LReport.getDisplayServerName(), reason);
+				SakuraReport.getInstance().getMessageChannel().broadcastStaff(player.isOnline()? player.getPlayer().getDisplayName() : player.getName(), (Player) reporter, SakuraReport.getDisplayServerName(), reason);
 			} catch (final IOException e) {
 				ExceptionUtils.printStacktrace(e);
 				reporter.sendMessage("§b§l举报 §7>> §e警告: 广播时发生数据库错误");

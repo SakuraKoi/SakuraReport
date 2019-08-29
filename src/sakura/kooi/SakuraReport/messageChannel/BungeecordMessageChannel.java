@@ -1,4 +1,4 @@
-package ldcr.LReport.messageChannel;
+package sakura.kooi.SakuraReport.messageChannel;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -15,7 +15,7 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
-import ldcr.LReport.LReport;
+import sakura.kooi.SakuraReport.SakuraReport;
 
 public class BungeecordMessageChannel implements PluginMessageListener, IMessageChannel {
 	private final MessageProcessor processor = new MessageProcessor();
@@ -81,7 +81,7 @@ public class BungeecordMessageChannel implements PluginMessageListener, IMessage
 			msgout.writeUTF(server);
 			out.writeShort(msgbytes.toByteArray().length);
 			out.write(msgbytes.toByteArray());
-			reporter.sendPluginMessage(LReport.getInstance(), "BungeeCord", out.toByteArray());
+			reporter.sendPluginMessage(SakuraReport.getInstance(), "BungeeCord", out.toByteArray());
 			processor.onReceiveBroadcastReport(player, reporter.getName(), reason, server);
 		} catch (final Exception ignored) {}
 	}
@@ -108,7 +108,7 @@ public class BungeecordMessageChannel implements PluginMessageListener, IMessage
 			msgout.writeUTF(server);
 			out.writeShort(msgbytes.toByteArray().length);
 			out.write(msgbytes.toByteArray());
-			sender.sendPluginMessage(LReport.getInstance(), "BungeeCord", out.toByteArray());
+			sender.sendPluginMessage(SakuraReport.getInstance(), "BungeeCord", out.toByteArray());
 			processor.onReceiveBroadcastReport(player, "Console", reason, server);
 		} catch (final Exception ignored) {}
 	}
@@ -131,7 +131,7 @@ public class BungeecordMessageChannel implements PluginMessageListener, IMessage
 
 			out.writeShort(msgbytes.toByteArray().length);
 			out.write(msgbytes.toByteArray());
-			reporter.sendPluginMessage(LReport.getInstance(), "BungeeCord", out.toByteArray());
+			reporter.sendPluginMessage(SakuraReport.getInstance(), "BungeeCord", out.toByteArray());
 			processor.onReceiveBroadcastStaff(player, reporter.getDisplayName(), reason, server);
 		} catch (final Exception ignored) {}
 	}
@@ -153,19 +153,19 @@ public class BungeecordMessageChannel implements PluginMessageListener, IMessage
 
 			out.writeShort(msgbytes.toByteArray().length);
 			out.write(msgbytes.toByteArray());
-			executor.sendPluginMessage(LReport.getInstance(), "BungeeCord", out.toByteArray());
+			executor.sendPluginMessage(SakuraReport.getInstance(), "BungeeCord", out.toByteArray());
 			processor.onReceiveBroadcastProcessed(player, reporter, executor.getName());
 		} catch (final Exception ignored) {}
 	}
 
 	@Override
 	public void connectChannel() {
-		Bukkit.getServer().getMessenger().registerIncomingPluginChannel(LReport.getInstance(), "BungeeCord", this);
+		Bukkit.getServer().getMessenger().registerIncomingPluginChannel(SakuraReport.getInstance(), "BungeeCord", this);
 	}
 
 	@Override
 	public void disconnectChannel() {
-		Bukkit.getServer().getMessenger().unregisterIncomingPluginChannel(LReport.getInstance(), "BungeeCord", this);
+		Bukkit.getServer().getMessenger().unregisterIncomingPluginChannel(SakuraReport.getInstance(), "BungeeCord", this);
 	}
 
 	@Override

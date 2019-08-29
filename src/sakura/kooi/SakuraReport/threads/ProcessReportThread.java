@@ -1,4 +1,4 @@
-package ldcr.LReport.threads;
+package sakura.kooi.SakuraReport.threads;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -7,9 +7,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import ldcr.LReport.LReport;
-import ldcr.LReport.Report;
-import ldcr.Utils.exception.ExceptionUtils;
+import sakura.kooi.SakuraReport.SakuraReport;
+import sakura.kooi.SakuraReport.Report;
+import sakura.kooi.Utils.exception.ExceptionUtils;
 
 public class ProcessReportThread implements Runnable {
 	private final CommandSender sender;
@@ -17,12 +17,12 @@ public class ProcessReportThread implements Runnable {
 	public ProcessReportThread(final CommandSender sender, final String id) {
 		this.sender = sender;
 		this.id = id;
-		Bukkit.getScheduler().runTaskAsynchronously(LReport.getInstance(), this);
+		Bukkit.getScheduler().runTaskAsynchronously(SakuraReport.getInstance(), this);
 	}
 	@Override
 	public void run() {
 		try {
-			final Report rpt = LReport.getInstance().getReportManager().getReport("#"+id);
+			final Report rpt = SakuraReport.getInstance().getReportManager().getReport("#"+id);
 			if (rpt==null) {
 				sender.sendMessage("§b§l举报 §7>> §c举报不存在");
 				return;
@@ -33,10 +33,10 @@ public class ProcessReportThread implements Runnable {
 					return;
 				}
 			}
-			LReport.getInstance().getReportManager().deleteReport(rpt.getID());
+			SakuraReport.getInstance().getReportManager().deleteReport(rpt.getID());
 			if (!"Console".equals(rpt.getReporter())) {
 				try {
-					LReport.getInstance().getMessageChannel().broadcastProcessed(rpt.getPlayer(), rpt.getReporter(), (Player) sender);
+					SakuraReport.getInstance().getMessageChannel().broadcastProcessed(rpt.getPlayer(), rpt.getReporter(), (Player) sender);
 				} catch (final IOException e) {
 					ExceptionUtils.printStacktrace(e);
 					sender.sendMessage("§b§l举报 §7>> §e警告: 广播时发生数据库错误");

@@ -1,4 +1,4 @@
-package ldcr.LReport.threads;
+package sakura.kooi.SakuraReport.threads;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -7,10 +7,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
-import ldcr.LReport.LReport;
-import ldcr.LReport.ManageGUICreator;
-import ldcr.LReport.Report;
-import ldcr.Utils.exception.ExceptionUtils;
+import sakura.kooi.SakuraReport.SakuraReport;
+import sakura.kooi.SakuraReport.ManageGUICreator;
+import sakura.kooi.SakuraReport.Report;
+import sakura.kooi.Utils.exception.ExceptionUtils;
 
 public class ManageGUIThread implements Runnable {
 	private final ManageGUICreator creator;
@@ -20,13 +20,13 @@ public class ManageGUIThread implements Runnable {
 		this.creator = creator;
 		this.player = player;
 		this.page = page;
-		Bukkit.getScheduler().runTaskAsynchronously(LReport.getInstance(), this);
+		Bukkit.getScheduler().runTaskAsynchronously(SakuraReport.getInstance(), this);
 	}
 	@Override
 	public void run() {
 		try {
-			LReport.getInstance().getReportManager().updatePlayerCache();
-			final List<Report> reports = LReport.getInstance().getReportManager().getAllReports();
+			SakuraReport.getInstance().getReportManager().updatePlayerCache();
+			final List<Report> reports = SakuraReport.getInstance().getReportManager().getAllReports();
 			boolean update = true;
 			if (reports.size()<=54) {
 				page=1;
@@ -71,7 +71,7 @@ public class ManageGUIThread implements Runnable {
 				player.closeInventory();
 				player.openInventory(mainGUI);
 			}
-			LReport.getInstance().getReportManager().clearCache();
+			SakuraReport.getInstance().getReportManager().clearCache();
 		} catch (final SQLException ex) {
 			ExceptionUtils.printStacktrace(ex);
 			player.sendMessage("§b§l举报 §7>> §c错误: 数据库操作出错, 请检查后台报错.");

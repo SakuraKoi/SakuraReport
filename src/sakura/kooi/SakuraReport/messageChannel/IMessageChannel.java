@@ -1,4 +1,4 @@
-package ldcr.LReport.messageChannel;
+package sakura.kooi.SakuraReport.messageChannel;
 
 import java.io.IOException;
 

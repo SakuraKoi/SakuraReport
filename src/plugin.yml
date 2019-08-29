@@ -1,18 +1,21 @@
-name: LReport
-main: ldcr.LReport.LReport
-version: 8
-author: Ldcr
-depend: ["LdcrUtils"]
+name: SakuraReport
+main: sakura.kooi.SakuraReport.SakuraReport
+version: 5
+author: SakuraKooi
+depend: ["SakuraUtils"]
 commands:
   report:
-  crpt:
-  staff:
-  lpt:
+  sakuraconsolereport:
+      aliases: [sakuracpt, scpt]
+  sakurastaffreport:
+      aliases: [sakura]
+  sakurareport:
+      aliases: [spt]
 permissions:
-  lreport.lpt:
+  sakurareport.manage:
     description: 管理举报的权限
     default: op
-  lreport.staff:
+  sakurareport.staff:
     description: 管理志愿者举报的权限
     default: op
 

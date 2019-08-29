@@ -1,4 +1,4 @@
-package ldcr.LReport.threads;
+package sakura.kooi.SakuraReport.threads;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -8,8 +8,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
-import ldcr.LReport.LReport;
-import ldcr.Utils.exception.ExceptionUtils;
+import sakura.kooi.SakuraReport.SakuraReport;
+import sakura.kooi.Utils.exception.ExceptionUtils;
 
 public class ConsoleReportThread implements Runnable {
 	private final CommandSender reporter;
@@ -24,18 +24,18 @@ public class ConsoleReportThread implements Runnable {
 			temp = temp+"...[限制48字]";
 		}
 		this.reason = temp;
-		Bukkit.getScheduler().runTaskAsynchronously(LReport.getInstance(), this);
+		Bukkit.getScheduler().runTaskAsynchronously(SakuraReport.getInstance(), this);
 	}
 	@Override
 	public void run() {
 		try {
-			LReport.getInstance().getReportManager().addReport(player.getName(), "Console", reason, player.isOnline()? player.getPlayer().getDisplayName() : "[Offline] "+player.getName());
+			SakuraReport.getInstance().getReportManager().addReport(player.getName(), "Console", reason, player.isOnline()? player.getPlayer().getDisplayName() : "[Offline] "+player.getName());
 			reporter.sendMessage("§b§l举报 §7>> §a已成功举报该玩家.");
 			if (!player.isOnline()) {
 				reporter.sendMessage("§b§l举报 §7>> §c注意: 该玩家不在线, 是否打错ID?");
 			} else {
-				if (isCheatReason(reason) && LReport.getInstance().getAntiCheatHook()!=null) {
-					LReport.getInstance().getAntiCheatHook().active(player.getPlayer(),reporter);
+				if (isCheatReason(reason) && SakuraReport.getInstance().getAntiCheatHook()!=null) {
+					SakuraReport.getInstance().getAntiCheatHook().active(player.getPlayer(),reporter);
 				}
 			}
 		} catch (final SQLException ex) {

@@ -1,21 +1,21 @@
-package ldcr.LReport.messageChannel;
+package sakura.kooi.SakuraReport.messageChannel;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
 import org.bukkit.entity.Player;
 
-import ldcr.LReport.LReport;
-import ldcr.Utils.database.mysql.MysqlDataSource;
-import ldcr.Utils.database.mysql.MysqlMessageChannel;
-import ldcr.lib.com.google.gson.JsonElement;
-import ldcr.lib.com.google.gson.JsonObject;
-import ldcr.lib.com.google.gson.JsonPrimitive;
+import sakura.kooi.SakuraReport.SakuraReport;
+import sakura.kooi.Utils.database.mysql.MysqlDataSource;
+import sakura.kooi.Utils.database.mysql.MysqlMessageChannel;
+import sakura.lib.com.google.gson.JsonElement;
+import sakura.lib.com.google.gson.JsonObject;
+import sakura.lib.com.google.gson.JsonPrimitive;
 
 public class DatabaseMessageChannel extends MysqlMessageChannel implements IMessageChannel {
 	private final MessageProcessor processor = new MessageProcessor();
 	public DatabaseMessageChannel(final MysqlDataSource mysqlDataSource) {
-		super(LReport.getInstance(), mysqlDataSource, "lreport_channel", 100, true);
+		super(SakuraReport.getInstance(), mysqlDataSource, "lreport_channel", 100, true);
 	}
 	@Override
 	public void onMessageReceived(final JsonElement data) {
@@ -54,7 +54,7 @@ public class DatabaseMessageChannel extends MysqlMessageChannel implements IMess
 				}
 			}
 		}
-		LReport.sendConsoleMessage("&e警告: 广播信道收到异常数据");
+		SakuraReport.sendConsoleMessage("&e警告: 广播信道收到异常数据");
 	}
 	@Override
 	public void jumpServer(final Player player, final String server) {

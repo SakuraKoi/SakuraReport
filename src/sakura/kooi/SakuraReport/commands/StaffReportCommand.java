@@ -1,20 +1,20 @@
-package ldcr.LReport.commands;
+package sakura.kooi.SakuraReport.commands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import ldcr.LReport.LReport;
-import ldcr.LReport.MessageBuilder;
-import ldcr.LReport.Report;
-import ldcr.LReport.threads.StaffReportThread;
-import ldcr.Utils.Bukkit.command.CommandHandler;
+import sakura.kooi.SakuraReport.SakuraReport;
+import sakura.kooi.SakuraReport.MessageBuilder;
+import sakura.kooi.SakuraReport.Report;
+import sakura.kooi.SakuraReport.threads.StaffReportThread;
+import sakura.kooi.Utils.Bukkit.command.CommandHandler;
 
 public class StaffReportCommand extends CommandHandler {
 
 	public StaffReportCommand() {
-		super(LReport.getInstance(), "§b§l举报");
+		super(SakuraReport.getInstance(), "§b§l举报");
 	}
 
 	@Override

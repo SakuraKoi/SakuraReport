@@ -1,18 +1,18 @@
-package ldcr.LReport.commands;
+package sakura.kooi.SakuraReport.commands;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import ldcr.LReport.LReport;
-import ldcr.LReport.threads.ListReportThread;
-import ldcr.LReport.threads.ProcessReportThread;
-import ldcr.LReport.threads.ReportTeleportThread;
-import ldcr.Utils.Bukkit.command.CommandHandler;
+import sakura.kooi.SakuraReport.SakuraReport;
+import sakura.kooi.SakuraReport.threads.ListReportThread;
+import sakura.kooi.SakuraReport.threads.ProcessReportThread;
+import sakura.kooi.SakuraReport.threads.ReportTeleportThread;
+import sakura.kooi.Utils.Bukkit.command.CommandHandler;
 
 public class ReportManagerCommand extends CommandHandler {
 
 	public ReportManagerCommand() {
-		super(LReport.getInstance(), "§b§l举报");
+		super(SakuraReport.getInstance(), "§b§l举报");
 	}
 
 	@Override
@@ -23,7 +23,7 @@ public class ReportManagerCommand extends CommandHandler {
 			return;
 		}
 		if (args.length==0) {
-			LReport.getInstance().getGuiCreator().openManageGUI((Player) sender);
+			SakuraReport.getInstance().getGuiCreator().openManageGUI((Player) sender);
 			return;
 		}
 		switch (args[0].toLowerCase()) {

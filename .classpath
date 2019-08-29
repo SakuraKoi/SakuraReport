@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/LdcrUtils"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Spigot1.8.8"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SakuraUtils"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

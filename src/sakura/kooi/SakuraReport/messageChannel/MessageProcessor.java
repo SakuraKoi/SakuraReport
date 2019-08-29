@@ -1,4 +1,4 @@
-package ldcr.LReport.messageChannel;
+package sakura.kooi.SakuraReport.messageChannel;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -7,8 +7,8 @@ import org.bukkit.entity.Player;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
-import ldcr.LReport.LReport;
-import ldcr.Utils.Bukkit.TitleUtils;
+import sakura.kooi.SakuraReport.SakuraReport;
+import sakura.kooi.Utils.Bukkit.TitleUtils;
 
 public class MessageProcessor {
 	public void jumpServer(final Player player,final String serverID) {
@@ -16,7 +16,7 @@ public class MessageProcessor {
 			final ByteArrayDataOutput out = ByteStreams.newDataOutput();
 			out.writeUTF("Connect");
 			out.writeUTF(serverID);
-			player.sendPluginMessage(LReport.getInstance(), "BungeeCord", out.toByteArray());
+			player.sendPluginMessage(SakuraReport.getInstance(), "BungeeCord", out.toByteArray());
 		} catch (final Exception e) {}
 	}
 	public void onReceiveBroadcastReport(final String cheater,final String reporter,final String reason,final String server) {

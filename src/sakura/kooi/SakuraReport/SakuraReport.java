@@ -1,4 +1,4 @@
-package ldcr.LReport;
+package sakura.kooi.SakuraReport;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,19 +14,19 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import ldcr.LReport.AnticheatSupport.IAnticheckHook;
-import ldcr.LReport.commands.ConsoleReportCommand;
-import ldcr.LReport.commands.ReportCommand;
-import ldcr.LReport.commands.ReportManagerCommand;
-import ldcr.LReport.commands.StaffReportCommand;
-import ldcr.LReport.messageChannel.DatabaseMessageChannel;
-import ldcr.LReport.messageChannel.IMessageChannel;
-import ldcr.LdcrUtils.plugin.LdcrUtils;
-import ldcr.Utils.exception.ExceptionUtils;
 import lombok.Getter;
+import sakura.kooi.SakuraReport.AnticheatSupport.IAnticheckHook;
+import sakura.kooi.SakuraReport.commands.ConsoleReportCommand;
+import sakura.kooi.SakuraReport.commands.ReportCommand;
+import sakura.kooi.SakuraReport.commands.ReportManagerCommand;
+import sakura.kooi.SakuraReport.commands.StaffReportCommand;
+import sakura.kooi.SakuraReport.messageChannel.DatabaseMessageChannel;
+import sakura.kooi.SakuraReport.messageChannel.IMessageChannel;
+import sakura.kooi.SakuraUtils.plugin.SakuraUtils;
+import sakura.kooi.Utils.exception.ExceptionUtils;
 
-public class LReport extends JavaPlugin implements Listener {
-	@Getter private static LReport instance;
+public class SakuraReport extends JavaPlugin implements Listener {
+	@Getter private static SakuraReport instance;
 
 	@Getter private ReportManager reportManager;
 	@Getter private IMessageChannel messageChannel;
@@ -44,7 +44,7 @@ public class LReport extends JavaPlugin implements Listener {
 	@Override
 	public void onEnable() {
 		instance = this;
-		LdcrUtils.requireVersion(this, 33);
+		SakuraUtils.requireVersion(this, 33);
 		logger = Bukkit.getConsoleSender();
 		loadConfig();
 		specListener = new SpecListener();
@@ -53,7 +53,7 @@ public class LReport extends JavaPlugin implements Listener {
 			reportManager.connect(mysqlServer,mysqlPort,mysqlDatabase,mysqlUser,mysqlPassword);
 		} catch (final SQLException e) {
 			ExceptionUtils.printStacktrace(e);
-			LReport.sendConsoleMessage("&c数据库连接失败, 请检查配置文件.");
+			SakuraReport.sendConsoleMessage("&c数据库连接失败, 请检查配置文件.");
 			setEnabled(false);
 			return;
 		}
@@ -62,7 +62,7 @@ public class LReport extends JavaPlugin implements Listener {
 			messageChannel.connectChannel();
 		} catch (final IOException e) {
 			ExceptionUtils.printStacktrace(e);
-			LReport.sendConsoleMessage("&c广播信道连接失败");
+			SakuraReport.sendConsoleMessage("&c广播信道连接失败");
 		}
 		getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 		guiCreator = new ManageGUICreator();
@@ -119,7 +119,7 @@ public class LReport extends JavaPlugin implements Listener {
 	public void onJoin(final PlayerLoginEvent e) {
 		Bukkit.getScheduler().runTaskLaterAsynchronously(this, () -> {
 			try {
-				LReport.instance.reportManager.playerOnline(e.getPlayer().getName());
+				SakuraReport.instance.reportManager.playerOnline(e.getPlayer().getName());
 			} catch (final SQLException e1) {
 				ExceptionUtils.printStacktrace(e1);
 				sendConsoleMessage("&c错误: 发生数据库错误, 请检查后台报错.");
@@ -130,7 +130,7 @@ public class LReport extends JavaPlugin implements Listener {
 	public void onLogout(final PlayerQuitEvent e) {
 		Bukkit.getScheduler().runTaskLaterAsynchronously(this, () -> {
 			try {
-				LReport.instance.reportManager.playerOffline(e.getPlayer().getName());
+				SakuraReport.instance.reportManager.playerOffline(e.getPlayer().getName());
 			} catch (final SQLException e1) {
 				ExceptionUtils.printStacktrace(e1);
 				sendConsoleMessage("&c错误: 发生数据库错误, 请检查后台报错.");
@@ -142,10 +142,11 @@ public class LReport extends JavaPlugin implements Listener {
 		@Override
 		public void run() {
 			try {
-				LReport.instance.reportManager.updatePlayerlist();
+				SakuraReport.instance.reportManager.updatePlayerlist();
+				SakuraReport.instance.reportManager.updatePlayerCache();
 			} catch (final SQLException e) {
 				ExceptionUtils.printStacktrace(e);
-				LReport.sendConsoleMessage("&c更新玩家列表时发生了数据库错误.");
+				SakuraReport.sendConsoleMessage("&c更新玩家列表时发生了数据库错误.");
 			}
 		}
 
